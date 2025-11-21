@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contactez l'ABS91. Téléphone, email, adresse et formulaire de contact pour toutes vos questions.">
+    <title>Contact - ABS91 | Amicale Badminton Spinolienne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-text">
+                        <span class="logo-main">ABS91</span>
+                        <span class="logo-sub">Amicale Badminton Spinolienne</span>
+                    </div>
+                </a>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Accueil</a></li>
+                    <li><a href="about.html" class="nav-link">À propos</a></li>
+                    <li><a href="inscription.html" class="nav-link">Inscriptions</a></li>
+                    <li><a href="horaires.html" class="nav-link">Horaires</a></li>
+                    <li><a href="actualites.html" class="nav-link">Actualités</a></li>
+                    <li><a href="galerie.html" class="nav-link">Galerie</a></li>
+                    <li><a href="contact.html" class="nav-link btn btn-primary active">Contact</a></li>
+                </ul>
+
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" style="min-height: 400px;">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Contactez-nous</h1>
+                <p>Une question ? Un renseignement ? N'hésitez pas à nous contacter, nous serons ravis de vous répondre</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT INFO -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">Nos coordonnées</h2>
+
+            <div class="cards-grid">
+                <div class="card observe" style="text-align: center;">
+                    <div class="card-icon" style="margin: 0 auto var(--spacing-sm);">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3 class="card-title">Téléphone</h3>
+                    <p class="card-text">
+                        <a href="tel:0638698878" style="color: var(--primary-red); font-size: 1.25rem; font-weight: 600;">
+                            06 38 69 88 78
+                        </a>
+                    </p>
+                    <p class="card-text" style="color: var(--gray-medium);">
+                        Disponibles du lundi au samedi<br>
+                        De préférence en fin de journée
+                    </p>
+                </div>
+
+                <div class="card observe" style="text-align: center;">
+                    <div class="card-icon" style="margin: 0 auto var(--spacing-sm);">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="card-title">Email</h3>
+                    <p class="card-text">
+                        <a href="mailto:abs91360@gmail.com" style="color: var(--primary-red); font-size: 1.25rem; font-weight: 600;">
+                            abs91360@gmail.com
+                        </a>
+                    </p>
+                    <p class="card-text" style="color: var(--gray-medium);">
+                        Réponse sous 48h ouvrées<br>
+                        Pour toute question générale
+                    </p>
+                </div>
+
+                <div class="card observe" style="text-align: center;">
+                    <div class="card-icon" style="margin: 0 auto var(--spacing-sm);">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="card-title">Adresse postale</h3>
+                    <p class="card-text">
+                        <strong style="color: var(--primary-dark);">
+                            ABS91<br>
+                            8 rue de l'Église<br>
+                            91360 Épinay-sur-Orge
+                        </strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULAIRE -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">Envoyez-nous un message</h2>
+            <p class="text-center observe" style="color: var(--gray-medium); max-width: 800px; margin: 0 auto var(--spacing-lg);">
+                Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+            </p>
+
+            <div class="card observe" style="max-width: 800px; margin: 0 auto;">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="nom" class="form-label">
+                            <i class="fas fa-user"></i> Nom complet *
+                        </label>
+                        <input type="text" id="nom" name="nom" class="form-control" placeholder="Votre nom et prénom" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email *
+                        </label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="votre.email@exemple.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telephone" class="form-label">
+                            <i class="fas fa-phone"></i> Téléphone
+                        </label>
+                        <input type="tel" id="telephone" name="telephone" class="form-control" placeholder="06 12 34 56 78">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sujet" class="form-label">
+                            <i class="fas fa-tag"></i> Sujet *
+                        </label>
+                        <select id="sujet" name="sujet" class="form-control" required>
+                            <option value="">Sélectionnez un sujet</option>
+                            <option value="inscription">Inscription / Renseignements</option>
+                            <option value="tarifs">Tarifs et modalités</option>
+                            <option value="horaires">Horaires et créneaux</option>
+                            <option value="essai">Demande de cours d'essai</option>
+                            <option value="competition">Compétition / Interclubs</option>
+                            <option value="autre">Autre question</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message" class="form-label">
+                            <i class="fas fa-comment"></i> Message *
+                        </label>
+                        <textarea id="message" name="message" class="form-control" placeholder="Écrivez votre message ici..." required></textarea>
+                    </div>
+
+                    <div style="text-align: center; margin-top: var(--spacing-lg);">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-paper-plane"></i> Envoyer le message
+                        </button>
+                    </div>
+
+                    <p style="text-align: center; margin-top: var(--spacing-sm); color: var(--gray-medium); font-size: 0.875rem;">
+                        * Champs obligatoires
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- GYMNASES -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">Où nous trouver ?</h2>
+            <p class="text-center observe" style="color: var(--gray-medium); max-width: 800px; margin: 0 auto var(--spacing-lg);">
+                Nous entraînons sur deux gymnases à Épinay-sur-Orge. Venez nous rencontrer lors de nos créneaux !
+            </p>
+
+            <div class="cards-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card observe">
+                    <div style="display: flex; align-items: flex-start; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                        <div class="card-icon" style="margin: 0;">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title" style="margin: 0;">Gymnase Millénaire des Templiers</h3>
+                            <span class="badge badge-primary mt-1">Principal lieu d'entraînement</span>
+                        </div>
+                    </div>
+
+                    <p class="card-text">
+                        <strong><i class="fas fa-map-marker-alt" style="color: var(--primary-red);"></i> Adresse</strong><br>
+                        5 rue de la Croix Ronde<br>
+                        91360 Épinay-sur-Orge
+                    </p>
+
+                    <p class="card-text">
+                        <strong><i class="fas fa-calendar-check" style="color: var(--primary-blue);"></i> Créneaux</strong><br>
+                        Mercredi 20h00-22h30<br>
+                        Jeudi 19h30-22h30<br>
+                        Samedi 09h00-12h45<br>
+                        Samedi 15h00-18h00
+                    </p>
+
+                    <a href="https://www.google.com/maps/search/?api=1&query=5+rue+de+la+Croix+Ronde+91360+Épinay-sur-Orge" target="_blank" rel="noopener" class="btn btn-primary mt-2" style="width: 100%;">
+                        <i class="fas fa-map-marked-alt"></i> Ouvrir dans Google Maps
+                    </a>
+                </div>
+
+                <div class="card observe">
+                    <div style="display: flex; align-items: flex-start; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                        <div class="card-icon" style="margin: 0;">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title" style="margin: 0;">Gymnase Alain Mimoun</h3>
+                            <span class="badge badge-secondary mt-1">Créneau loisir</span>
+                        </div>
+                    </div>
+
+                    <p class="card-text">
+                        <strong><i class="fas fa-map-marker-alt" style="color: var(--primary-red);"></i> Adresse</strong><br>
+                        Voie des Prés<br>
+                        91360 Épinay-sur-Orge
+                    </p>
+
+                    <p class="card-text">
+                        <strong><i class="fas fa-calendar-check" style="color: var(--primary-blue);"></i> Créneaux</strong><br>
+                        Mardi 20h30-22h30<br>
+                        <br>
+                        <br>
+                        <br>
+                    </p>
+
+                    <a href="https://www.google.com/maps/search/?api=1&query=Voie+des+Prés+91360+Épinay-sur-Orge" target="_blank" rel="noopener" class="btn btn-primary mt-2" style="width: 100%;">
+                        <i class="fas fa-map-marked-alt"></i> Ouvrir dans Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">Questions fréquentes</h2>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="card observe mb-3">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle" style="color: var(--primary-blue);"></i>
+                        Puis-je essayer avant de m'inscrire ?
+                    </h3>
+                    <p class="card-text">
+                        Bien sûr ! Nous proposons des cours d'essai gratuits. Contactez-nous pour convenir d'une date et venez
+                        découvrir notre club et notre ambiance. N'oubliez pas votre équipement sportif et une bouteille d'eau !
+                    </p>
+                </div>
+
+                <div class="card observe mb-3">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle" style="color: var(--primary-blue);"></i>
+                        Faut-il être licencié pour jouer ?
+                    </h3>
+                    <p class="card-text">
+                        Oui, la licence FFBaD est obligatoire pour pratiquer en club. Elle est incluse dans tous nos tarifs et
+                        comprend une assurance. L'inscription se fait 100% en ligne via la plateforme FFBaD.
+                    </p>
+                </div>
+
+                <div class="card observe mb-3">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle" style="color: var(--primary-blue);"></i>
+                        Je suis débutant, puis-je rejoindre le club ?
+                    </h3>
+                    <p class="card-text">
+                        Absolument ! Nous accueillons tous les niveaux, des débutants complets aux compétiteurs confirmés.
+                        Nos entraîneurs s'adaptent à chaque niveau et nous proposons des cours d'initiation.
+                    </p>
+                </div>
+
+                <div class="card observe mb-3">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle" style="color: var(--primary-blue);"></i>
+                        Quel matériel faut-il pour commencer ?
+                    </h3>
+                    <p class="card-text">
+                        Pour débuter : une tenue de sport, des chaussures d'intérieur adaptées (semelles non marquantes), et une
+                        bouteille d'eau. Pour la raquette, nous pouvons vous en prêter une le temps de vos premiers entraînements.
+                    </p>
+                </div>
+
+                <div class="card observe">
+                    <h3 class="card-title">
+                        <i class="fas fa-question-circle" style="color: var(--primary-blue);"></i>
+                        Quels sont les horaires d'ouverture du secrétariat ?
+                    </h3>
+                    <p class="card-text">
+                        Nous n'avons pas de secrétariat physique permanent. Le meilleur moyen de nous joindre est par téléphone
+                        (06 38 69 88 78) ou email (abs91360@gmail.com). Vous pouvez aussi venir nous voir directement sur nos
+                        créneaux d'entraînement.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESEAUX SOCIAUX -->
+    <section class="section">
+        <div class="container">
+            <div class="card observe" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-blue) 100%); color: var(--white); text-align: center; padding: var(--spacing-lg);">
+                <h2 style="color: var(--white); margin-bottom: var(--spacing-sm);">Suivez-nous sur les réseaux sociaux</h2>
+                <p style="font-size: 1.125rem; margin-bottom: var(--spacing-md); max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Restez connecté avec l'ABS91 et ne manquez aucune actualité, photo ou événement !
+                </p>
+                <div class="social-links" style="justify-content: center; gap: var(--spacing-md);">
+                    <a href="https://www.facebook.com/AmicaleBadmintonSpinolienne" target="_blank" rel="noopener" class="social-link" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ABS91</h3>
+                    <p>Amicale Badminton Spinolienne</p>
+                    <p>Fondé en 1999</p>
+                    <p>Club affilié FFBaD</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/AmicaleBadmintonSpinolienne" class="social-link" target="_blank" rel="noopener" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="inscription.html">Inscriptions</a></li>
+                        <li><a href="horaires.html">Horaires</a></li>
+                        <li><a href="actualites.html">Actualités</a></li>
+                        <li><a href="galerie.html">Galerie</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Nos Gymnases</h3>
+                    <p><strong>Gymnase Millénaire</strong></p>
+                    <p>5 rue de la Croix Ronde<br>91360 Épinay-sur-Orge</p>
+                    <p class="mt-2"><strong>Gymnase Alain Mimoun</strong></p>
+                    <p>Voie des Prés<br>91360 Épinay-sur-Orge</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-phone"></i> 06 38 69 88 78</p>
+                    <p><i class="fas fa-envelope"></i> abs91360@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 8 rue de l'Église<br>91360 Épinay-sur-Orge</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 ABS91 - Amicale Badminton Spinolienne. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Gestion du formulaire de contact
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Simuler l'envoi du formulaire
+            alert('Votre message a été envoyé ! Nous vous répondrons dans les plus brefs délais.\n\nNote : Ce formulaire est une démo. Pour l\'activer, vous devrez configurer un backend ou utiliser un service comme FormSpree, Netlify Forms, etc.');
+
+            // Réinitialiser le formulaire
+            this.reset();
+        });
+    </script>
+</body>
+</html>

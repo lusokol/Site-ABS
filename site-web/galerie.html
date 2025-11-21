@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Galerie photos de l'ABS91. Découvrez en images la vie de notre club de badminton.">
+    <title>Galerie - ABS91 | Amicale Badminton Spinolienne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+        }
+        .photo-item {
+            aspect-ratio: 4/3;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--white);
+        }
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: var(--spacing-sm);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: var(--white);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-text">
+                        <span class="logo-main">ABS91</span>
+                        <span class="logo-sub">Amicale Badminton Spinolienne</span>
+                    </div>
+                </a>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Accueil</a></li>
+                    <li><a href="about.html" class="nav-link">À propos</a></li>
+                    <li><a href="inscription.html" class="nav-link">Inscriptions</a></li>
+                    <li><a href="horaires.html" class="nav-link">Horaires</a></li>
+                    <li><a href="actualites.html" class="nav-link">Actualités</a></li>
+                    <li><a href="galerie.html" class="nav-link active">Galerie</a></li>
+                    <li><a href="contact.html" class="nav-link btn btn-primary">Contact</a></li>
+                </ul>
+
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" style="min-height: 400px;">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Galerie photos</h1>
+                <p>Revivez les meilleurs moments du club en images : entraînements, compétitions, événements et convivialité</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- INFO -->
+    <section class="section">
+        <div class="container">
+            <div class="card observe" style="background-color: var(--bg-light); border: 2px solid var(--primary-blue); text-align: center;">
+                <i class="fas fa-camera" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: var(--spacing-sm);"></i>
+                <h3 class="card-title">Galerie en construction</h3>
+                <p class="card-text">
+                    Les vraies photos du club seront bientôt ajoutées ! En attendant, découvrez l'organisation de notre galerie
+                    avec ces sections thématiques.
+                </p>
+                <p class="card-text">
+                    <strong>Suivez-nous sur Facebook</strong> pour voir nos photos en temps réel :
+                    <a href="https://www.facebook.com/AmicaleBadmintonSpinolienne" target="_blank" rel="noopener" style="color: var(--primary-red); font-weight: 600;">
+                        @AmicaleBadmintonSpinolienne
+                    </a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ENTRAÎNEMENTS -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">
+                <i class="fas fa-dumbbell" style="color: var(--primary-red);"></i>
+                Entraînements
+            </h2>
+            <p class="text-center observe" style="color: var(--gray-medium); max-width: 800px; margin: 0 auto var(--spacing-lg);">
+                Nos séances d'entraînement en action : jeu libre, cours encadrés et progression technique.
+            </p>
+
+            <div class="photo-grid observe">
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-shuttlecock"></i>
+                    </div>
+                    <div class="photo-caption">Entraînement adultes - Mercredi soir</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="photo-caption">Cours collectif avec coach</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    <div class="photo-caption">École de badminton - Jeunes</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <div class="photo-caption">Échauffement en groupe</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="photo-caption">Jeu libre - Ambiance conviviale</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="photo-caption">Cours technique samedi matin</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPETITIONS -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">
+                <i class="fas fa-trophy" style="color: var(--primary-red);"></i>
+                Compétitions
+            </h2>
+            <p class="text-center observe" style="color: var(--gray-medium); max-width: 800px; margin: 0 auto var(--spacing-lg);">
+                Nos équipes en action lors des interclubs et tournois : engagement, combativité et esprit d'équipe.
+            </p>
+
+            <div class="photo-grid observe">
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="photo-caption">Interclubs - Équipe 1</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="photo-caption">Fair-play et respect</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);">
+                        <i class="fas fa-fist-raised"></i>
+                    </div>
+                    <div class="photo-caption">Concentration et détermination</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="photo-caption">Victoire en interclubs</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #ff6348 0%, #ff4757 100%);">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div class="photo-caption">Équipe compétiteurs</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="photo-caption">Performances exceptionnelles</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EVENEMENTS -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">
+                <i class="fas fa-calendar-alt" style="color: var(--primary-red);"></i>
+                Événements
+            </h2>
+            <p class="text-center observe" style="color: var(--gray-medium); max-width: 800px; margin: 0 auto var(--spacing-lg);">
+                Nos moments festifs : soirées, animations, tournois et célébrations tout au long de l'année.
+            </p>
+
+            <div class="photo-grid observe">
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #f368e0 0%, #ff9ff3 100%);">
+                        <i class="fas fa-glass-cheers"></i>
+                    </div>
+                    <div class="photo-caption">Soirée de fin d'année</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="photo-caption">Galette des rois</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="photo-caption">Soirée dansante</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #ff6348 0%, #ff4757 100%);">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="photo-caption">Repas partagé</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div class="photo-caption">Week-end à la campagne</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="photo-caption">Tournoi interne</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COHESION -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-4 observe">
+                <i class="fas fa-heart" style="color: var(--primary-red);"></i>
+                Moments de cohésion
+            </h2>
+            <p class="text-center observe" style="color: var(--gray-medium); max-width: 800px; margin: 0 auto var(--spacing-lg);">
+                L'esprit ABS91 : convivialité, partage et moments inoubliables entre membres du club.
+            </p>
+
+            <div class="photo-grid observe">
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="photo-caption">Journée cohésion</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="photo-caption">Photo de groupe</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <div class="photo-caption">Entraide et partage</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-laugh"></i>
+                    </div>
+                    <div class="photo-caption">Moments de rire</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-people-carry"></i>
+                    </div>
+                    <div class="photo-caption">Esprit d'équipe</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="photo-caption">Souvenirs inoubliables</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-blue) 100%); color: var(--white);">
+        <div class="container" style="text-align: center;">
+            <h2 class="observe" style="color: var(--white);">Envie de faire partie de ces moments ?</h2>
+            <p class="observe" style="font-size: 1.25rem; max-width: 100%; margin: 0 auto var(--spacing-lg);">
+                Rejoignez l'ABS91 et créez vos propres souvenirs !
+            </p>
+            <div class="observe">
+                <a href="inscription.html" class="btn btn-primary btn-large" style="background-color: var(--white); color: var(--primary-dark);">
+                    S'inscrire maintenant
+                </a>
+                <a href="https://www.facebook.com/AmicaleBadmintonSpinolienne" target="_blank" rel="noopener" class="btn btn-outline btn-large" style="border-color: var(--white); color: var(--white); margin-left: var(--spacing-sm);">
+                    <i class="fab fa-facebook-f"></i> Voir nos photos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ABS91</h3>
+                    <p>Amicale Badminton Spinolienne</p>
+                    <p>Fondé en 1999</p>
+                    <p>Club affilié FFBaD</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/AmicaleBadmintonSpinolienne" class="social-link" target="_blank" rel="noopener" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="about.html">À propos</a></li>
+                        <li><a href="inscription.html">Inscriptions</a></li>
+                        <li><a href="horaires.html">Horaires</a></li>
+                        <li><a href="actualites.html">Actualités</a></li>
+                        <li><a href="galerie.html">Galerie</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Nos Gymnases</h3>
+                    <p><strong>Gymnase Millénaire</strong></p>
+                    <p>5 rue de la Croix Ronde<br>91360 Épinay-sur-Orge</p>
+                    <p class="mt-2"><strong>Gymnase Alain Mimoun</strong></p>
+                    <p>Voie des Prés<br>91360 Épinay-sur-Orge</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-phone"></i> 06 38 69 88 78</p>
+                    <p><i class="fas fa-envelope"></i> abs91360@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 8 rue de l'Église<br>91360 Épinay-sur-Orge</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 ABS91 - Amicale Badminton Spinolienne. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
