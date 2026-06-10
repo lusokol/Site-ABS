@@ -479,7 +479,7 @@ function init() {
 
     // === TILT 3D SUR LES CARTES (souris uniquement) ===
     if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) {
-        document.querySelectorAll('.card').forEach(card => {
+        document.querySelectorAll('.card:not(.no-tilt)').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width - 0.5;

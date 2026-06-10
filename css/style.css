@@ -941,6 +941,16 @@ p {
     color: rgba(255, 255, 255, 0.9);
 }
 
+.card-dark p {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card-dark .social-links {
+    justify-content: center;
+}
+
 /* === BADGES === */
 .badge {
     display: inline-block;
