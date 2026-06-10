@@ -323,7 +323,7 @@ p {
     right: var(--spacing-sm);
     bottom: 2px;
     height: 2px;
-    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent));
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-teal));
     border-radius: 2px;
     transform: scaleX(0);
     transform-origin: left;
@@ -824,7 +824,7 @@ p {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent));
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-teal));
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     transform: scaleX(0);
     transform-origin: left;
@@ -1721,7 +1721,7 @@ textarea.form-control {
     left: 0;
     width: 100%;
     height: 3px;
-    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent));
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-teal));
     transform: scaleX(0);
     transform-origin: left;
     z-index: 1100;
@@ -1862,7 +1862,7 @@ textarea.form-control {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent), var(--color-cyan));
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-teal), var(--color-cyan));
 }
 
 /* === SCROLLBAR PERSONNALISEE === */
@@ -2042,7 +2042,7 @@ textarea.form-control {
     bottom: 8px;
     width: 4px;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, var(--color-cyan), var(--color-accent));
+    background: linear-gradient(180deg, var(--color-cyan), var(--color-teal));
     border-radius: 2px;
 }
 
@@ -2161,7 +2161,7 @@ textarea.form-control {
     font-weight: 800;
     font-size: clamp(6rem, 20vw, 11rem);
     line-height: 1;
-    background: linear-gradient(135deg, var(--color-cyan), var(--color-accent));
+    background: linear-gradient(135deg, var(--color-cyan), var(--color-teal));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
