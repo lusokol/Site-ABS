@@ -1,0 +1,41 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Static website for ABS91 (Amicale Badminton Spinolienne), a badminton club in Epinay-sur-Orge (91360, France). The site is entirely vanilla HTML/CSS/JS with no build step, no package manager, and no framework.
+
+## Running Locally
+
+No build is required. Serve with any static file server:
+
+```bash
+python -m http.server 8000
+# or
+npx http-server -p 8000
+```
+
+Then open `http://localhost:8000`.
+
+## Architecture
+
+- **8 HTML pages** at the root: `index.html`, `about.html`, `inscription.html`, `horaires.html`, `actualites.html`, `galerie.html`, `contact.html`, `partenaires.html`
+- **`css/style.css`** — single stylesheet using CSS custom properties (`:root` variables) for theming. Responsive breakpoints at 480px, 768px, and 1024px. Includes `prefers-reduced-motion` support.
+- **`js/main.js`** — single JS file handling: mobile nav (backdrop + scroll lock + `aria-expanded`), scroll-to-top button, smooth scroll, active nav highlighting, Intersection Observer animations (`.observe` → `.fade-in`), toast notifications (replaces `alert()`), real-time form validation with error messages, animated counters (`data-count` on `.stat-number`, using `requestAnimationFrame`), and gallery lightbox (keyboard + Escape support).
+- External dependencies loaded via CDN: Google Fonts (Inter + Montserrat), Font Awesome 6.4.0.
+- `amicalebadmintonspinolienne.WordPress.2025-11-21.xml` — WordPress export from the old site, kept as reference content.
+
+## Key Conventions
+
+- All content is in French.
+- CSS theming is done exclusively through `:root` custom properties — change colors/spacing there, not in individual rules.
+- Each HTML page uses `<main>` between header and footer. A `<div class="nav-backdrop">` sits after `</header>` for mobile menu overlay.
+- Scroll animations use the `.observe` class; the JS Intersection Observer adds `.fade-in` on visibility. Animations are disabled when `prefers-reduced-motion` is active.
+- Stat counters use `data-count="N"` on `.stat-number` elements.
+- Navigation and footer are duplicated across all 8 HTML files (no templating) — changes to nav/footer must be applied to all 8 pages.
+- CTA sections use class `section-cta` with `btn-cta-primary` / `btn-cta-outline` buttons (white-on-dark styling).
+- Cards use `card-center` for centered layout, `card-featured` for highlighted cards, `card-dark` for dark gradient cards.
+- Toast container (`<div class="toast-container">`) and scroll-to-top button (`<button class="scroll-top">`) are present on every page before `</body>`.
+- Form validation uses `.form-error` divs after required inputs — the JS toggles `.visible` class and `.error` on inputs.
+- Avoid inline `style` attributes — use CSS utility classes (`.text-center`, `.intro-text`, `.mt-2`, `.mb-4`, `.mx-auto`, `.grid-2`, `.cards-grid-sm`, `.d-flex`, `.align-center`, `.gap-sm`, etc.).
