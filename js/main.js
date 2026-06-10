@@ -48,7 +48,9 @@ function init() {
         navMenu.classList.add('active');
         if (navBackdrop) navBackdrop.classList.add('active');
         navToggle.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
+        // Verrou de scroll sur <html>, jamais sur <body> : un overflow
+        // hidden sur le body casserait les position: sticky (header)
+        document.documentElement.style.overflow = 'hidden';
         const spans = navToggle.querySelectorAll('span');
         spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
         spans[1].style.opacity = '0';
@@ -59,7 +61,7 @@ function init() {
         navMenu.classList.remove('active');
         if (navBackdrop) navBackdrop.classList.remove('active');
         navToggle.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
         const spans = navToggle.querySelectorAll('span');
         spans[0].style.transform = '';
         spans[1].style.opacity = '';
@@ -427,11 +429,11 @@ function init() {
             `;
 
             document.body.appendChild(lightbox);
-            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
 
             const closeLightbox = () => {
                 document.body.removeChild(lightbox);
-                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
                 item.focus();
             };
 

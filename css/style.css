@@ -229,13 +229,23 @@ p {
 /* === HEADER & NAVIGATION === */
 .header {
     background-color: rgba(255, 255, 255, 0.82);
-    -webkit-backdrop-filter: blur(14px) saturate(1.4);
-    backdrop-filter: blur(14px) saturate(1.4);
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: 0;
     z-index: 1000;
     transition: var(--transition-normal);
+}
+
+/* Le flou est porte par un pseudo-element : un backdrop-filter sur
+   .header en ferait le containing block des descendants fixed
+   (.nav-wrap) qui se caleraient sur le header au lieu du viewport */
+.header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
+    z-index: -1;
 }
 
 .header.scrolled {
