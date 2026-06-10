@@ -2132,8 +2132,10 @@ textarea.form-control {
     .timeline-marker,
     .timeline-item:nth-child(even) .timeline-marker {
         right: auto;
-        left: 10px;
-        transform: translateX(-50%);
+        /* Cale a gauche sans translateX(-50%) : les pastilles larges
+           ("Annees 2000") sortiraient de l'ecran */
+        left: 0;
+        transform: none;
     }
 }
 
