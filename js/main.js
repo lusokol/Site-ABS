@@ -201,16 +201,46 @@ function init() {
         });
     }
 
-    // Fleche de la banniere d'accueil : saute l'animation d'intro
-    // (scroll jusqu'a la fin du wrapper, le contenu arrive sous le header)
+    // Fleche de la banniere d'accueil : joue l'animation d'intro en
+    // descendant lentement jusqu'a la fin du wrapper (contenu sous le header).
+    // Defilement pilote a la main (rAF + ease-in-out) : le scrollTo natif
+    // ne permet de regler ni la duree ni l'easing.
     const scrollCue = document.querySelector('.scroll-cue');
     if (scrollCue && heroBannerWrapper) {
         scrollCue.addEventListener('click', () => {
             const headerH = header ? header.offsetHeight : 0;
-            window.scrollTo({
-                top: heroBannerWrapper.offsetTop + heroBannerWrapper.offsetHeight - headerH,
-                behavior: prefersReducedMotion ? 'auto' : 'smooth'
-            });
+            const targetY = heroBannerWrapper.offsetTop + heroBannerWrapper.offsetHeight - headerH;
+
+            if (prefersReducedMotion) {
+                window.scrollTo(0, targetY);
+                return;
+            }
+
+            const startY = window.pageYOffset;
+            const distance = targetY - startY;
+            const duration = 2000;
+            const startTime = performance.now();
+            let cancelled = false;
+
+            // L'utilisateur reprend la main -> on arrete net
+            const cancel = () => { cancelled = true; };
+            const cancelEvents = ['wheel', 'touchstart', 'keydown'];
+            cancelEvents.forEach(ev => window.addEventListener(ev, cancel, { passive: true, once: true }));
+
+            const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+            function step(now) {
+                if (cancelled) return;
+                const progress = Math.min((now - startTime) / duration, 1);
+                window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    cancelEvents.forEach(ev => window.removeEventListener(ev, cancel));
+                }
+            }
+
+            requestAnimationFrame(step);
         });
     }
 
