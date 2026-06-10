@@ -75,6 +75,9 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    /* clip (et non hidden) : empeche tout debordement horizontal
+       sans casser position: sticky */
+    overflow-x: clip;
 }
 
 body {
@@ -82,7 +85,9 @@ body {
     line-height: 1.6;
     color: var(--gray-dark);
     background-color: var(--white);
-    overflow-x: hidden;
+    /* Pas d'overflow-x: hidden ici : combine a l'overflow-x: clip du html,
+       il transformerait le body en conteneur de scroll et casserait
+       les position: sticky (header, banniere d'accueil) */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -90,6 +95,9 @@ body {
 
 main {
     flex: 1;
+    /* clip les transforms hors-champ des reveals .observe-left/right
+       sans creer de conteneur de scroll (le sticky continue de marcher) */
+    overflow-x: clip;
 }
 
 img {
@@ -275,6 +283,14 @@ p {
     color: var(--gray-medium);
 }
 
+/* Sur desktop le wrapper est transparent pour le layout (le ul reste
+   enfant flex direct de la navbar) ; sur mobile il devient un cadre
+   fixe plein ecran qui clippe le panneau hors-champ — sans lui, le
+   panneau cache elargirait le viewport mobile (page dezoomee) */
+.nav-wrap {
+    display: contents;
+}
+
 .nav-menu {
     display: flex;
     gap: var(--spacing-sm);
@@ -350,11 +366,15 @@ p {
     background: rgba(0, 0, 0, 0.5);
     z-index: 998;
     opacity: 0;
+    /* Indispensable : invisible, le voile ne doit pas intercepter
+       les taps sur le contenu (liens morts sur mobile sinon) */
+    pointer-events: none;
     transition: opacity var(--transition-normal);
 }
 
 .nav-backdrop.active {
     opacity: 1;
+    pointer-events: auto;
 }
 
 /* === BOUTONS === */
@@ -601,8 +621,26 @@ p {
 }
 
 @media (max-width: 768px) {
+    /* Course de scroll raccourcie : l'animation du logo se joue
+       sur ~90vh au lieu de ~150vh */
+    .hero-banner-wrapper {
+        height: 190vh;
+    }
+
+    /* Banniere plein ecran : evite le bandeau blanc sous la banniere
+       sticky pendant l'animation */
     .hero-banner {
-        height: 500px;
+        height: calc(100vh - var(--header-h, 0px));
+        height: calc(100svh - var(--header-h, 0px));
+    }
+
+    /* Logo reduit (le plein-hauteur depasserait la largeur de l'ecran),
+       pose en bas : il roule le long du sol pendant le wipe */
+    .hero-banner-logo {
+        top: auto;
+        bottom: 24px;
+        height: auto;
+        width: min(72vw, 320px);
     }
 
     .hero-banner-content {
@@ -615,10 +653,6 @@ p {
 }
 
 @media (max-width: 480px) {
-    .hero-banner {
-        height: 450px;
-    }
-
     .hero-banner-content .hero-buttons {
         flex-direction: column;
         align-items: center;
@@ -1348,23 +1382,44 @@ textarea.form-control {
         display: block;
     }
 
-    .nav-menu {
+    .nav-wrap {
+        display: block;
         position: fixed;
+        /* Le backdrop-filter du header en fait le containing block des
+           descendants fixed : inset: 0 se calerait sur le header (75px).
+           On dimensionne donc explicitement — le header sticky etant
+           toujours en haut du viewport, top: 0 + 100dvh = plein ecran */
         top: 0;
-        right: -100%;
+        left: 0;
+        right: 0;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 999;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translateX(100%);
+        visibility: hidden;
+        pointer-events: auto;
         flex-direction: column;
         background-color: var(--white);
-        width: 280px;
-        height: 100vh;
+        width: min(280px, 82vw);
+        height: 100%;
         padding: 80px var(--spacing-md) var(--spacing-md);
         box-shadow: var(--shadow-lg);
-        transition: right var(--transition-normal);
-        z-index: 999;
+        transition: transform var(--transition-normal), visibility var(--transition-normal);
         gap: var(--spacing-xs);
+        overflow-y: auto;
     }
 
     .nav-menu.active {
-        right: 0;
+        transform: translateX(0);
+        visibility: visible;
     }
 
     .nav-menu .nav-link {

@@ -44,3 +44,11 @@ Then open `http://localhost:8000`.
 - Toast container (`<div class="toast-container">`) and scroll-to-top button (`<button class="scroll-top">`) are present on every page before `</body>`.
 - Form validation uses `.form-error` divs after required inputs — the JS toggles `.visible` class and `.error` on inputs.
 - Avoid inline `style` attributes — use CSS utility classes (`.text-center`, `.intro-text`, `.mt-2`, `.mb-4`, `.mx-auto`, `.grid-2`, `.cards-grid-sm`, `.d-flex`, `.align-center`, `.gap-sm`, etc.).
+
+## Mobile Gotchas (hard-won — do not regress)
+
+- Horizontal overflow is contained with `overflow-x: clip` on `html` and `main` — never use `overflow-x: hidden` on `body`/`html`: combined they break `position: sticky` (header + home banner). Off-screen `position: fixed` elements still expand the mobile layout viewport (page zooms out) even with clip, hence:
+- The mobile nav panel lives inside `.nav-wrap` (`display: contents` on desktop, fixed full-screen `overflow: hidden` frame on mobile) and slides via `transform`, not `right: -100%`.
+- The header's `backdrop-filter` makes it the containing block for fixed descendants — `.nav-wrap` uses explicit `top/left/right/height` instead of `inset: 0` (which would resolve against the header box).
+- `.nav-backdrop` must keep `pointer-events: none` when inactive — it covers the whole page invisibly on mobile and would swallow all taps.
+- The home banner animation is unchanged on desktop; on mobile (≤768px) it switches to full-screen banner (`100svh - header`), shorter scroll track (`190vh` wrapper) and a smaller logo (`72vw`) rolling along the bottom.
