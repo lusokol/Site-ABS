@@ -612,19 +612,32 @@ p {
     animation: heroRise 0.8s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Indicateur de scroll en bas de la banniere */
+/* Indicateur de scroll en bas de la banniere — clic = sauter l'intro */
 .scroll-cue {
     position: absolute;
-    bottom: 28px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
     color: var(--white);
     font-size: 1.5rem;
     opacity: 0.85;
     animation: scrollBounce 2s ease-in-out infinite;
-    z-index: 3;
-    pointer-events: none;
+    z-index: 6;
+    cursor: pointer;
+    /* zone de tap confortable (~44px) */
+    padding: 10px 16px;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    transition: opacity var(--transition-fast);
+}
+
+.scroll-cue:hover {
+    opacity: 1;
+}
+
+.scroll-cue:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
 }
 
 @keyframes scrollBounce {

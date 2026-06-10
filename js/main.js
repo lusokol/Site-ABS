@@ -201,6 +201,19 @@ function init() {
         });
     }
 
+    // Fleche de la banniere d'accueil : saute l'animation d'intro
+    // (scroll jusqu'a la fin du wrapper, le contenu arrive sous le header)
+    const scrollCue = document.querySelector('.scroll-cue');
+    if (scrollCue && heroBannerWrapper) {
+        scrollCue.addEventListener('click', () => {
+            const headerH = header ? header.offsetHeight : 0;
+            window.scrollTo({
+                top: heroBannerWrapper.offsetTop + heroBannerWrapper.offsetHeight - headerH,
+                behavior: prefersReducedMotion ? 'auto' : 'smooth'
+            });
+        });
+    }
+
     // === SMOOTH SCROLL ===
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
