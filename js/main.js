@@ -2,6 +2,9 @@
 // ABS91 - JavaScript Principal
 // ========================================
 
+// Marqueur JS actif — le CSS ne masque les elements .observe que si cette classe est presente
+document.documentElement.classList.add('js');
+
 // === CHARGEMENT DES COMPOSANTS (header/footer) ===
 async function loadComponents() {
     const slots = document.querySelectorAll('[data-include]');
@@ -94,6 +97,12 @@ function init() {
     // === SCROLL EFFECTS ===
     const scrollTopBtn = document.querySelector('.scroll-top');
 
+    // Barre de progression de lecture en haut de page
+    const scrollProgress = document.createElement('div');
+    scrollProgress.className = 'scroll-progress';
+    scrollProgress.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(scrollProgress);
+
     // Hero banner — logo roulant
     const heroBannerWrapper = document.querySelector('.hero-banner-wrapper');
     const heroBanner = document.querySelector('.hero-banner');
@@ -117,6 +126,10 @@ function init() {
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
+
+        // Barre de progression
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        scrollProgress.style.transform = `scaleX(${docHeight > 0 ? currentScroll / docHeight : 0})`;
 
         // Header shadow
         if (header) {
@@ -196,6 +209,16 @@ function init() {
     });
 
     // === FADE IN ON SCROLL ===
+    // Decalage en cascade : chaque element .observe recoit un index --stagger
+    // au sein de son parent (les grilles de cartes apparaissent en escalier)
+    const staggerCounts = new Map();
+    document.querySelectorAll('.observe').forEach(el => {
+        const parent = el.parentElement;
+        const i = staggerCounts.get(parent) || 0;
+        el.style.setProperty('--stagger', i % 6);
+        staggerCounts.set(parent, i + 1);
+    });
+
     if (!prefersReducedMotion) {
         const observerOptions = {
             threshold: 0.1,
@@ -414,6 +437,60 @@ function init() {
             }
         });
     });
+
+    // === TILT 3D SUR LES CARTES (souris uniquement) ===
+    if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.classList.add('is-tilting');
+                card.style.transform =
+                    `perspective(900px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg) translateY(-6px)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('is-tilting');
+                card.style.transform = '';
+            });
+        });
+    }
+
+    // === RIPPLE SUR LES BOUTONS ===
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn');
+        if (!btn || prefersReducedMotion) return;
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+        ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    });
+
+    // === DECORATIONS FLOTTANTES (heros et sections CTA) ===
+    if (!prefersReducedMotion) {
+        const decoTypes = ['dot', 'ring', 'glow'];
+        document.querySelectorAll('.hero, .section-cta').forEach(zone => {
+            const frag = document.createDocumentFragment();
+            for (let i = 0; i < 7; i++) {
+                const deco = document.createElement('span');
+                const size = 14 + Math.random() * 70;
+                deco.className = `float-deco float-deco--${decoTypes[i % decoTypes.length]}`;
+                deco.setAttribute('aria-hidden', 'true');
+                deco.style.width = deco.style.height = `${size.toFixed(0)}px`;
+                deco.style.left = `${(Math.random() * 92).toFixed(1)}%`;
+                deco.style.top = `${(Math.random() * 80).toFixed(1)}%`;
+                deco.style.animationDuration = `${(5 + Math.random() * 6).toFixed(1)}s`;
+                deco.style.animationDelay = `-${(Math.random() * 6).toFixed(1)}s`;
+                frag.appendChild(deco);
+            }
+            zone.appendChild(frag);
+        });
+    }
 }
 
 // === UTILITIES ===

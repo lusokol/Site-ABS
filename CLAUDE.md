@@ -31,9 +31,11 @@ Then open `http://localhost:8000`.
 - All content is in French.
 - CSS theming is done exclusively through `:root` custom properties — change colors/spacing there, not in individual rules.
 - Each HTML page uses `<main>` between header and footer. A `<div class="nav-backdrop">` sits after `</header>` for mobile menu overlay.
-- Scroll animations use the `.observe` class; the JS Intersection Observer adds `.fade-in` on visibility. Animations are disabled when `prefers-reduced-motion` is active.
+- Scroll animations use the `.observe` class; the JS Intersection Observer adds `.fade-in` on visibility. Directional variants: `.observe-left`, `.observe-right`, `.observe-zoom`. Elements are only hidden when JS is active (`.js` class on `<html>`), and siblings reveal in cascade via a `--stagger` CSS variable set by JS. Animations are disabled when `prefers-reduced-motion` is active.
 - Stat counters use `data-count="N"` on `.stat-number` elements.
-- Navigation and footer are duplicated across all 8 HTML files (no templating) — changes to nav/footer must be applied to all 8 pages.
+- Header and footer live in `components/header.html` and `components/footer.html`, loaded on each page via `<div data-include="components/...">` (fetched by `js/main.js`) — edit them once there, not per page.
+- Decorative elements injected by JS (no HTML needed): scroll progress bar (`.scroll-progress`), floating shapes in `.hero` / `.section-cta` sections (`.float-deco`), 3D tilt on `.card` (mouse only), ripple on `.btn` click.
+- The home page has a scrolling `.marquee` strip (duplicated `.marquee-track` content for a seamless loop, `aria-hidden`).
 - CTA sections use class `section-cta` with `btn-cta-primary` / `btn-cta-outline` buttons (white-on-dark styling).
 - Cards use `card-center` for centered layout, `card-featured` for highlighted cards, `card-dark` for dark gradient cards.
 - Toast container (`<div class="toast-container">`) and scroll-to-top button (`<button class="scroll-top">`) are present on every page before `</body>`.

@@ -220,7 +220,9 @@ p {
 
 /* === HEADER & NAVIGATION === */
 .header {
-    background-color: var(--white);
+    background-color: rgba(255, 255, 255, 0.82);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: 0;
@@ -229,6 +231,7 @@ p {
 }
 
 .header.scrolled {
+    background-color: rgba(255, 255, 255, 0.92);
     box-shadow: var(--shadow-md);
 }
 
@@ -283,6 +286,27 @@ p {
     border-radius: var(--radius-sm);
     transition: var(--transition-fast);
     font-weight: 500;
+    position: relative;
+}
+
+/* Soulignement anime des liens de nav (sauf bouton Contact) */
+.nav-link:not(.btn)::after {
+    content: '';
+    position: absolute;
+    left: var(--spacing-sm);
+    right: var(--spacing-sm);
+    bottom: 2px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent));
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-normal);
+}
+
+.nav-link:not(.btn):hover::after,
+.nav-link:not(.btn).active::after {
+    transform: scaleX(1);
 }
 
 .nav-link:hover {
@@ -348,6 +372,43 @@ p {
     cursor: pointer;
     border: 2px solid transparent;
     line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Reflet qui balaie le bouton au survol */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
+    pointer-events: none;
+}
+
+.btn:hover::before {
+    left: 130%;
+}
+
+/* Onde au clic (injectee par JS) */
+.btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: btnRipple 0.6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes btnRipple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
 }
 
 .btn:focus-visible {
@@ -356,13 +417,13 @@ p {
 }
 
 .btn-primary {
-    background-color: var(--color-accent);
+    background: linear-gradient(135deg, #FF8A50, var(--color-accent));
     color: var(--white);
     box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: var(--color-accent-hover);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
     box-shadow: 0 6px 25px rgba(255, 107, 53, 0.45);
     transform: translateY(-3px);
 }
@@ -506,6 +567,39 @@ p {
     flex-wrap: wrap;
 }
 
+/* Entree animee du texte de la banniere (image avant uniquement) */
+.hero-banner-img--front h1 {
+    animation: heroRise 0.8s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-banner-img--front p {
+    animation: heroRise 0.8s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-banner-img--front .hero-buttons {
+    animation: heroRise 0.8s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Indicateur de scroll en bas de la banniere */
+.scroll-cue {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--white);
+    font-size: 1.5rem;
+    opacity: 0.85;
+    animation: scrollBounce 2s ease-in-out infinite;
+    z-index: 3;
+    pointer-events: none;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes scrollBounce {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 10px); }
+}
+
 @media (max-width: 768px) {
     .hero-banner {
         height: 500px;
@@ -549,7 +643,21 @@ p {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(ellipse at 25% 75%, rgba(0, 183, 227, 0.25) 0%, transparent 55%);
+    background:
+        radial-gradient(ellipse at 25% 75%, rgba(0, 183, 227, 0.3) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 20%, rgba(255, 107, 53, 0.12) 0%, transparent 50%);
+    animation: heroGlow 9s ease-in-out infinite alternate;
+}
+
+@keyframes heroGlow {
+    from {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1.12);
+    }
 }
 
 .hero::after {
@@ -578,6 +686,7 @@ p {
     color: var(--white);
     margin-bottom: var(--spacing-md);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: heroRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .hero p {
@@ -585,6 +694,22 @@ p {
     margin-bottom: var(--spacing-lg);
     opacity: 0.95;
     max-width: 100%;
+    animation: heroRise 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero .hero-buttons {
+    animation: heroRise 0.8s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes heroRise {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .hero-buttons {
@@ -647,10 +772,35 @@ p {
     position: relative;
 }
 
+/* Barre degradee revelee au survol */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-slow);
+}
+
+.card:hover::before {
+    transform: scaleX(1);
+}
+
 .card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-6px);
     border-color: rgba(0, 183, 227, 0.2);
+}
+
+/* Pendant le tilt 3D (JS), le transform doit suivre la souris sans latence */
+.card.is-tilting {
+    transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
+    will-change: transform;
 }
 
 .card-featured {
@@ -684,21 +834,30 @@ p {
     width: 64px;
     height: 64px;
     border-radius: var(--radius-lg);
-    background: var(--primary-red);
+    background: linear-gradient(135deg, var(--color-cyan), #0090B8);
     color: var(--white);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.75rem;
     margin-bottom: var(--spacing-sm);
+    box-shadow: 0 6px 18px rgba(0, 183, 227, 0.3);
+    transition: var(--transition-normal);
+}
+
+.card:hover .card-icon {
+    transform: scale(1.12) rotate(-6deg);
+    box-shadow: 0 10px 26px rgba(0, 183, 227, 0.4);
 }
 
 .card:nth-child(3n+2) .card-icon {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, #007A91, var(--primary-dark));
+    box-shadow: 0 6px 18px rgba(0, 85, 100, 0.3);
 }
 
 .card:nth-child(3n) .card-icon {
-    background: var(--color-accent);
+    background: linear-gradient(135deg, #FF8A50, var(--color-accent));
+    box-shadow: 0 6px 18px rgba(255, 107, 53, 0.3);
 }
 
 .card-icon-blue {
@@ -818,6 +977,10 @@ p {
     font-size: 3rem;
     font-weight: 800;
     color: var(--color-accent);
+    background: linear-gradient(135deg, #FF8A50, var(--color-accent) 60%, #E04A1A);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     line-height: 1;
     margin-bottom: var(--spacing-xs);
     font-family: var(--font-heading);
@@ -1320,35 +1483,43 @@ textarea.form-control {
     }
 }
 
-/* === ANIMATIONS === */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* === ANIMATIONS (reveal au scroll) === */
+/* Les elements .observe sont masques uniquement si le JS est actif (classe .js sur <html>),
+   puis reveles avec un decalage en cascade via --stagger (defini par le JS) */
+.js .observe {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+        opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--stagger, 0) * 90ms);
 }
 
-.fade-in {
-    animation: fadeIn var(--transition-slow) ease-out;
+.js .observe-left {
+    transform: translateX(-44px);
 }
 
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+.js .observe-right {
+    transform: translateX(44px);
 }
 
-.slide-in-left {
-    animation: slideInLeft var(--transition-slow) ease-out;
+.js .observe-zoom {
+    transform: scale(0.92);
+}
+
+.js .observe.fade-in {
+    opacity: 1;
+    transform: none;
+}
+
+/* Le soulignement des titres de section grandit a l'apparition */
+.js h2.observe.text-center::after {
+    transform: scaleX(0);
+    transition: transform 0.6s 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.js h2.observe.text-center.fade-in::after {
+    transform: scaleX(1);
 }
 
 /* === PREFERS REDUCED MOTION === */
@@ -1363,6 +1534,25 @@ textarea.form-control {
 
     html {
         scroll-behavior: auto;
+    }
+
+    .js .observe {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .js h2.observe.text-center::after {
+        transform: scaleX(1);
+    }
+
+    .marquee-track {
+        animation: none;
+    }
+
+    .float-deco,
+    .scroll-cue {
+        display: none;
     }
 
     .card:hover,
@@ -1421,4 +1611,202 @@ textarea.form-control {
     color: var(--white);
     font-size: 0.875rem;
     font-weight: 600;
+}
+
+/* Reflet qui balaie la photo au survol */
+.photo-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -85%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.photo-item:hover::after {
+    left: 135%;
+}
+
+/* ========================================
+   GLOW UP — nouveaux composants visuels
+   ======================================== */
+
+/* === BARRE DE PROGRESSION DE SCROLL === */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    z-index: 1100;
+    pointer-events: none;
+}
+
+/* === MARQUEE (bandeau defilant) === */
+.marquee {
+    background: linear-gradient(90deg, var(--color-teal), #007A91, var(--color-teal));
+    color: var(--white);
+    overflow: hidden;
+    padding: 0.8rem 0;
+    position: relative;
+    z-index: 3;
+}
+
+.marquee-track {
+    display: flex;
+    gap: 3rem;
+    width: max-content;
+    animation: marqueeScroll 28s linear infinite;
+    white-space: nowrap;
+}
+
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+
+.marquee-track span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.marquee-track i {
+    color: var(--color-cyan);
+    font-size: 0.7rem;
+}
+
+@keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* === DECORATIONS FLOTTANTES (injectees par JS dans hero et CTA) === */
+.float-deco {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatDrift ease-in-out infinite alternate;
+}
+
+.float-deco--dot {
+    background: radial-gradient(circle, rgba(0, 183, 227, 0.35), rgba(0, 183, 227, 0.05));
+    filter: blur(2px);
+}
+
+.float-deco--ring {
+    border: 2px solid rgba(255, 255, 255, 0.14);
+}
+
+.float-deco--glow {
+    background: radial-gradient(circle, rgba(255, 107, 53, 0.22), transparent 70%);
+    filter: blur(4px);
+}
+
+@keyframes floatDrift {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(14px, -26px) rotate(10deg); }
+}
+
+/* === SECTION CTA (fond anime) === */
+.section-cta {
+    overflow: hidden;
+}
+
+.section-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 15% 80%, rgba(0, 183, 227, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 15%, rgba(255, 107, 53, 0.15) 0%, transparent 45%);
+    animation: heroGlow 10s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+.section-cta .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* === LIGHTBOX (apparition animee) === */
+.lightbox {
+    animation: lightboxFade 0.25s ease-out;
+}
+
+.lightbox-content img {
+    animation: lightboxZoom 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes lightboxFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes lightboxZoom {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* === LOGO (rotation au survol) === */
+.logo-img {
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.logo:hover .logo-img {
+    transform: rotate(360deg);
+}
+
+/* === FOOTER (liseret degrade) === */
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-accent), var(--color-cyan));
+}
+
+/* === SCROLLBAR PERSONNALISEE === */
+::-webkit-scrollbar {
+    width: 11px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color-cyan), var(--color-teal));
+    border-radius: 6px;
+    border: 2px solid var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-cyan-hover);
+}
+
+/* === SELECTION DE TEXTE === */
+::selection {
+    background: var(--color-cyan);
+    color: var(--white);
 }
