@@ -112,6 +112,8 @@ function init() {
     let bannerWidth = heroBanner ? heroBanner.offsetWidth : 0;
     let wrapperHeight = heroBannerWrapper ? heroBannerWrapper.offsetHeight : 0;
     let logoSize = 0;
+    // Sur mobile la banniere passe en fondu (voir scroll handler)
+    const mobileBannerQuery = window.matchMedia('(max-width: 768px)');
 
     if (heroBanner) {
         window.addEventListener('resize', () => {
@@ -167,10 +169,26 @@ function init() {
 
             bannerLogo.style.transform = `translateX(${-distanceTraveled}px) rotate(${rotation}deg)`;
 
-            const logoCenterX = bannerWidth - distanceTraveled + (logoSize / 2);
-            const clipEdge = logoCenterX + (logoSize * 0.05);
-            const clipFromRight = Math.min(Math.max((clipEdge / bannerWidth) * 100, 0), 100);
-            bannerFront.style.clipPath = `inset(0 ${100 - clipFromRight}% 0 0)`;
+            if (mobileBannerQuery.matches) {
+                // Mobile : le logo est trop petit pour masquer la couture du
+                // wipe — on fond les deux images l'une dans l'autre pendant
+                // que le logo roule en bas
+                // Fenetre serree : limite le moment ou les deux textes se superposent
+                const fade = Math.min(Math.max((progress - 0.25) / 0.35, 0), 1);
+                bannerFront.style.clipPath = '';
+                bannerFront.style.opacity = String(1 - fade);
+                // L'image avant couvre toujours l'arriere : ne plus capter
+                // les taps une fois quasi invisible
+                bannerFront.style.pointerEvents = fade > 0.5 ? 'none' : '';
+            } else {
+                // Desktop : wipe revele par le logo pleine hauteur
+                const logoCenterX = bannerWidth - distanceTraveled + (logoSize / 2);
+                const clipEdge = logoCenterX + (logoSize * 0.05);
+                const clipFromRight = Math.min(Math.max((clipEdge / bannerWidth) * 100, 0), 100);
+                bannerFront.style.clipPath = `inset(0 ${100 - clipFromRight}% 0 0)`;
+                bannerFront.style.opacity = '';
+                bannerFront.style.pointerEvents = '';
+            }
         }
     });
 
