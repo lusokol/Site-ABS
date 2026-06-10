@@ -540,13 +540,15 @@ p {
 }
 
 .hero-banner-img--back {
-    background-color: var(--color-teal);
+    background: linear-gradient(rgba(0, 85, 100, 0.4), rgba(0, 40, 50, 0.5)), url('../media/equipe-coupe-essonne.jpg');
+    background-size: cover;
+    background-position: center;
     z-index: 1;
 }
 
 /* Image avant (cachee progressivement) — par-dessus la back */
 .hero-banner-img--front {
-    background: linear-gradient(rgba(0, 85, 100, 0.5), rgba(0, 40, 50, 0.6)), url('../media/gymnasemil.png');
+    background: linear-gradient(rgba(0, 85, 100, 0.4), rgba(0, 40, 50, 0.5)), url('../media/gymnasemil.png');
     background-size: cover;
     background-position: center;
     z-index: 2;
@@ -1641,6 +1643,19 @@ textarea.form-control {
     .scroll-top:hover {
         transform: none;
     }
+}
+
+/* === ADRESSE COPIABLE === */
+.copyable-address {
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin: -4px;
+}
+
+.copyable-address:hover {
+    background-color: var(--accent-light-soft);
 }
 
 /* === GALLERY (galerie.html) === */

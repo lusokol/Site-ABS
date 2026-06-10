@@ -376,7 +376,8 @@ function init() {
         function update(currentTime) {
             const elapsed = currentTime - start;
             const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - (1 - progress) * (1 - progress);
+            // Ease out expo — très rapide au début, ralentit sur la fin
+            const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
             const current = Math.floor(eased * target);
 
             if (progress < 1) {
@@ -455,6 +456,17 @@ function init() {
                 e.preventDefault();
                 handler();
             }
+        });
+    });
+
+    // === COPIER ADRESSE AU CLIC (delegation pour les composants charges dynamiquement) ===
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('.copyable-address');
+        if (!el) return;
+        const address = el.getAttribute('data-address');
+        if (!address) return;
+        navigator.clipboard.writeText(address).then(() => {
+            showToast('Adresse copiée : ' + address, 'success');
         });
     });
 
