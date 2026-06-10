@@ -634,13 +634,12 @@ p {
         height: calc(100svh - var(--header-h, 0px));
     }
 
-    /* Logo reduit (le plein-hauteur depasserait la largeur de l'ecran),
-       pose en bas : il roule le long du sol pendant le wipe */
+    /* Logo reduit en simple detail decoratif qui roule le long du sol */
     .hero-banner-logo {
         top: auto;
-        bottom: 24px;
+        bottom: 16px;
         height: auto;
-        width: min(72vw, 320px);
+        width: min(36vw, 160px);
     }
 
     .hero-banner-content {
