@@ -1432,7 +1432,7 @@ textarea.form-control {
         padding: 80px var(--spacing-md) var(--spacing-md);
         box-shadow: var(--shadow-lg);
         transition: transform var(--transition-normal), visibility var(--transition-normal);
-        gap: var(--spacing-xs);
+        gap: var(--spacing-sm);
         overflow-y: auto;
     }
 
@@ -1442,10 +1442,14 @@ textarea.form-control {
     }
 
     .nav-menu .nav-link {
+        /* block : en inline, le padding vertical ne pousse pas la ligne
+           et les zones cliquables se chevauchent */
+        display: block;
         padding: var(--spacing-sm);
         font-size: 1.05rem;
         border-radius: var(--radius-md);
         width: 100%;
+        text-align: center;
     }
 
     .nav-menu .nav-link:hover,
