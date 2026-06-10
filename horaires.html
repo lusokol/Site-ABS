@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Horaires et créneaux d'entraînement de l'ABS91. Gymnases Millénaire et Alain Mimoun à Épinay-sur-Orge.">
     <title>Horaires - ABS91 | Amicale Badminton Spinolienne</title>
+
+    <!-- Favicon & couleur de theme -->
+    <link rel="icon" type="image/png" href="media/cropped-abs.png">
+    <link rel="apple-touch-icon" href="media/cropped-abs.png">
+    <meta name="theme-color" content="#005564">
+
+    <!-- SEO & partage social -->
+    <link rel="canonical" href="https://abs91.fr/horaires.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ABS91 - Amicale Badminton Spinolienne">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Horaires - ABS91 | Amicale Badminton Spinolienne">
+    <meta property="og:description" content="Horaires et créneaux d'entraînement de l'ABS91. Gymnases Millénaire et Alain Mimoun à Épinay-sur-Orge.">
+    <meta property="og:url" content="https://abs91.fr/horaires.html">
+    <meta property="og:image" content="https://abs91.fr/media/cropped-abs.png">
+    <meta name="twitter:card" content="summary">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +29,7 @@
 
     <div data-include="components/header.html"></div>
 
-    <main>
+    <main id="contenu">
     <!-- HERO -->
     <section class="hero hero-inner">
         <div class="container">
@@ -32,6 +48,53 @@
                 L'ABS91 vous propose 5 créneaux par semaine répartis sur 2 gymnases d'Épinay-sur-Orge.
             </p>
 
+            <!-- Planning visuel de la semaine -->
+            <div class="planning observe">
+                <div class="planning-day">
+                    <div class="planning-day-name">Mardi</div>
+                    <div class="planning-slot planning-slot--loisir">
+                        <span class="planning-hours">20h30 – 22h30</span>
+                        <span class="planning-label">Adultes loisir · jeu libre</span>
+                        <span class="planning-place"><i class="fas fa-map-marker-alt"></i> Gymnase Mimoun</span>
+                    </div>
+                </div>
+                <div class="planning-day">
+                    <div class="planning-day-name">Mercredi</div>
+                    <div class="planning-slot planning-slot--loisir">
+                        <span class="planning-hours">20h00 – 22h30</span>
+                        <span class="planning-label">Adultes loisir · jeu libre</span>
+                        <span class="planning-place"><i class="fas fa-map-marker-alt"></i> Gymnase Millénaire</span>
+                    </div>
+                </div>
+                <div class="planning-day">
+                    <div class="planning-day-name">Jeudi</div>
+                    <div class="planning-slot planning-slot--compet">
+                        <span class="planning-hours">19h30 – 22h30</span>
+                        <span class="planning-label">Compétiteurs · interclubs</span>
+                        <span class="planning-place"><i class="fas fa-map-marker-alt"></i> Gymnase Millénaire</span>
+                    </div>
+                </div>
+                <div class="planning-day">
+                    <div class="planning-day-name">Samedi</div>
+                    <div class="planning-slot planning-slot--jeunes">
+                        <span class="planning-hours">09h00 – 12h45</span>
+                        <span class="planning-label">Jeunes & cours adultes</span>
+                        <span class="planning-place"><i class="fas fa-map-marker-alt"></i> Gymnase Millénaire</span>
+                    </div>
+                    <div class="planning-slot planning-slot--loisir">
+                        <span class="planning-hours">15h00 – 18h00</span>
+                        <span class="planning-label">Adultes loisir · animations</span>
+                        <span class="planning-place"><i class="fas fa-map-marker-alt"></i> Gymnase Millénaire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="planning-legend observe mb-4">
+                <span><i class="legend-dot legend-dot--loisir"></i>Loisir & jeu libre</span>
+                <span><i class="legend-dot legend-dot--jeunes"></i>Jeunes & cours encadrés</span>
+                <span><i class="legend-dot legend-dot--compet"></i>Compétiteurs</span>
+            </div>
+
+            <h3 class="text-center mb-4 observe">Le détail des créneaux</h3>
             <div class="cards-grid">
                 <div class="card observe">
                     <div class="d-flex align-center gap-sm mb-2">

@@ -438,6 +438,27 @@ function init() {
         });
     });
 
+    // === FILTRES ACTUALITES ===
+    const filterBtns = document.querySelectorAll('.badge-filter[data-filter]');
+    if (filterBtns.length) {
+        const filterCards = document.querySelectorAll('[data-category]');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('badge-primary');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                btn.classList.add('badge-primary');
+                btn.setAttribute('aria-pressed', 'true');
+                const filter = btn.getAttribute('data-filter');
+                filterCards.forEach(card => {
+                    const show = filter === 'all' || card.getAttribute('data-category') === filter;
+                    card.classList.toggle('is-hidden', !show);
+                });
+            });
+        });
+    }
+
     // === TILT 3D SUR LES CARTES (souris uniquement) ===
     if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) {
         document.querySelectorAll('.card').forEach(card => {

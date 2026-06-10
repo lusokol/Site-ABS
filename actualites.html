@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Actualités du club ABS91. Suivez toutes les nouvelles, événements et résultats de notre club de badminton.">
     <title>Actualités - ABS91 | Amicale Badminton Spinolienne</title>
+
+    <!-- Favicon & couleur de theme -->
+    <link rel="icon" type="image/png" href="media/cropped-abs.png">
+    <link rel="apple-touch-icon" href="media/cropped-abs.png">
+    <meta name="theme-color" content="#005564">
+
+    <!-- SEO & partage social -->
+    <link rel="canonical" href="https://abs91.fr/actualites.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ABS91 - Amicale Badminton Spinolienne">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Actualités - ABS91 | Amicale Badminton Spinolienne">
+    <meta property="og:description" content="Actualités du club ABS91. Suivez toutes les nouvelles, événements et résultats de notre club de badminton.">
+    <meta property="og:url" content="https://abs91.fr/actualites.html">
+    <meta property="og:image" content="https://abs91.fr/media/cropped-abs.png">
+    <meta name="twitter:card" content="summary">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +29,7 @@
 
     <div data-include="components/header.html"></div>
 
-    <main>
+    <main id="contenu">
 
     <!-- HERO -->
     <section class="hero hero-inner">
@@ -29,10 +45,10 @@
     <section class="section">
         <div class="container">
             <div class="d-flex justify-center gap-sm flex-wrap">
-                <button class="badge badge-primary badge-filter">Toutes</button>
-                <button class="badge badge-filter">Actualités</button>
-                <button class="badge badge-filter">Interclubs</button>
-                <button class="badge badge-filter">Événements</button>
+                <button class="badge badge-primary badge-filter" data-filter="all" aria-pressed="true">Toutes</button>
+                <button class="badge badge-filter" data-filter="actualites" aria-pressed="false">Actualités</button>
+                <button class="badge badge-filter" data-filter="interclubs" aria-pressed="false">Interclubs</button>
+                <button class="badge badge-filter" data-filter="evenements" aria-pressed="false">Événements</button>
             </div>
         </div>
     </section>
@@ -43,7 +59,7 @@
             <h2 class="text-center mb-4 observe">Dernières actualités</h2>
 
             <div class="cards-grid">
-                <div class="card observe">
+                <div class="card observe" data-category="actualites">
                     <span class="badge badge-primary mb-2">02 Sept 2025</span>
                     <span class="badge badge-secondary mb-2">Actualités</span>
                     <h3 class="card-title">Journée des associations et reprise des créneaux</h3>
@@ -61,7 +77,7 @@
                     </div>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="actualites">
                     <span class="badge badge-primary mb-2">25 Août 2025</span>
                     <span class="badge badge-secondary mb-2">Actualités</span>
                     <h3 class="card-title">Inscriptions ouvertes pour la saison 2025-2026</h3>
@@ -81,9 +97,9 @@
                     </a>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="evenements">
                     <span class="badge badge-primary mb-2">15 Juin 2025</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-red); color: var(--white);">Événements</span>
+                    <span class="badge badge-cyan mb-2">Événements</span>
                     <h3 class="card-title">Soirée de fin de saison</h3>
                     <p class="card-text">
                         Quelle belle soirée pour clôturer cette saison 2024-2025 ! Un grand merci à tous les participants
@@ -99,9 +115,9 @@
                     </div>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="interclubs">
                     <span class="badge badge-primary mb-2">28 Mai 2025</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-dark); color: var(--white);">Interclubs</span>
+                    <span class="badge badge-secondary mb-2">Interclubs</span>
                     <h3 class="card-title">Bilan des interclubs 2024-2025</h3>
                     <p class="card-text">
                         La saison d'interclubs se termine sur une note positive pour nos 4 équipes. Bravo à tous nos
@@ -120,9 +136,9 @@
                     </div>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="evenements">
                     <span class="badge badge-primary mb-2">10 Mars 2025</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-red); color: var(--white);">Événements</span>
+                    <span class="badge badge-cyan mb-2">Événements</span>
                     <h3 class="card-title">Week-end compétition à la campagne</h3>
                     <p class="card-text">
                         Un week-end sportif et convivial organisé pour renforcer la cohésion de nos équipes de compétition.
@@ -134,9 +150,9 @@
                     </p>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="interclubs">
                     <span class="badge badge-primary mb-2">12 Fév 2025</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-dark); color: var(--white);">Interclubs</span>
+                    <span class="badge badge-secondary mb-2">Interclubs</span>
                     <h3 class="card-title">Victoire écrasante en interclubs !</h3>
                     <p class="card-text">
                         Nos équipes ont brillé lors de la dernière journée d'interclubs ! Félicitations à tous les joueurs
@@ -152,9 +168,9 @@
                     </div>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="evenements">
                     <span class="badge badge-primary mb-2">08 Jan 2025</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-red); color: var(--white);">Événements</span>
+                    <span class="badge badge-cyan mb-2">Événements</span>
                     <h3 class="card-title">Galette des rois</h3>
                     <p class="card-text">
                         Tradition oblige ! Tous les adhérents se sont réunis pour partager la galette des rois et bien
@@ -166,9 +182,9 @@
                     </p>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="evenements">
                     <span class="badge badge-primary mb-2">15 Déc 2024</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-red); color: var(--white);">Événements</span>
+                    <span class="badge badge-cyan mb-2">Événements</span>
                     <h3 class="card-title">Soirée dansante de fin d'année</h3>
                     <p class="card-text">
                         Une soirée mémorable pour célébrer la fin d'année 2024 ! Musique, danse, bonne humeur et
@@ -184,9 +200,9 @@
                     </div>
                 </div>
 
-                <div class="card observe">
+                <div class="card observe" data-category="evenements">
                     <span class="badge badge-primary mb-2">28 Nov 2024</span>
-                    <span class="badge mb-2" style="background-color: var(--primary-red); color: var(--white);">Événements</span>
+                    <span class="badge badge-cyan mb-2">Événements</span>
                     <h3 class="card-title">Journée Cohésion</h3>
                     <p class="card-text">
                         Une superbe journée conviviale avec tous les membres du club. Tournois amicaux, jeux, repas

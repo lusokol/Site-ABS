@@ -20,7 +20,7 @@ Then open `http://localhost:8000`.
 
 ## Architecture
 
-- **8 HTML pages** at the root: `index.html`, `about.html`, `inscription.html`, `horaires.html`, `actualites.html`, `galerie.html`, `contact.html`, `partenaires.html`
+- **8 HTML pages** at the root: `index.html`, `about.html`, `inscription.html`, `horaires.html`, `actualites.html`, `galerie.html`, `contact.html`, `partenaires.html` — plus `404.html`.
 - **`css/style.css`** — single stylesheet using CSS custom properties (`:root` variables) for theming. Responsive breakpoints at 480px, 768px, and 1024px. Includes `prefers-reduced-motion` support.
 - **`js/main.js`** — single JS file handling: mobile nav (backdrop + scroll lock + `aria-expanded`), scroll-to-top button, smooth scroll, active nav highlighting, Intersection Observer animations (`.observe` → `.fade-in`), toast notifications (replaces `alert()`), real-time form validation with error messages, animated counters (`data-count` on `.stat-number`, using `requestAnimationFrame`), and gallery lightbox (keyboard + Escape support).
 - External dependencies loaded via CDN: Google Fonts (Inter + Montserrat), Font Awesome 6.4.0.
@@ -36,6 +36,9 @@ Then open `http://localhost:8000`.
 - Header and footer live in `components/header.html` and `components/footer.html`, loaded on each page via `<div data-include="components/...">` (fetched by `js/main.js`) — edit them once there, not per page.
 - Decorative elements injected by JS (no HTML needed): scroll progress bar (`.scroll-progress`), floating shapes in `.hero` / `.section-cta` sections (`.float-deco`), 3D tilt on `.card` (mouse only), ripple on `.btn` click.
 - The home page has a scrolling `.marquee` strip (duplicated `.marquee-track` content for a seamless loop, `aria-hidden`).
+- News filters (`actualites.html`): buttons carry `data-filter` and cards carry `data-category` (`actualites` / `interclubs` / `evenements`); the JS toggles `.is-hidden`. The active button gets `badge-primary` + `aria-pressed`.
+- The production domain is `https://abs91.fr` — used in `sitemap.xml`, `robots.txt`, canonical/Open Graph tags (in every page `<head>`) and the JSON-LD block on `index.html`. Keep these in sync when adding/renaming pages.
+- `horaires.html` has a visual weekly `.planning` grid (slot colors: `--loisir`, `--jeunes`, `--compet`); `about.html` has a `.timeline` (alternating items, tightened with negative margins on desktop only).
 - CTA sections use class `section-cta` with `btn-cta-primary` / `btn-cta-outline` buttons (white-on-dark styling).
 - Cards use `card-center` for centered layout, `card-featured` for highlighted cards, `card-dark` for dark gradient cards.
 - Toast container (`<div class="toast-container">`) and scroll-to-top button (`<button class="scroll-top">`) are present on every page before `</body>`.

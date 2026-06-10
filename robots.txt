@@ -1,1 +1,4 @@
-Access denied
+User-agent: *
+Allow: /
+
+Sitemap: https://abs91.fr/sitemap.xml

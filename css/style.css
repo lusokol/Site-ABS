@@ -1810,3 +1810,279 @@ textarea.form-control {
     background: var(--color-cyan);
     color: var(--white);
 }
+
+/* === LIEN D'EVITEMENT (accessibilite) === */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--primary-dark);
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0 0 var(--radius-md) 0;
+    font-weight: 600;
+    z-index: 1200;
+}
+
+.skip-link:focus {
+    left: 0;
+}
+
+/* === BADGES SUPPLEMENTAIRES === */
+.badge-cyan {
+    background-color: var(--color-cyan);
+    color: var(--white);
+}
+
+/* Cartes masquees par les filtres d'actualites */
+.is-hidden {
+    display: none !important;
+}
+
+/* === PLANNING HEBDOMADAIRE (horaires) === */
+.planning {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.planning-day {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.planning-day-name {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    text-align: center;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 2px solid var(--bg-light);
+}
+
+.planning-slot {
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: var(--transition-normal);
+}
+
+.planning-slot + .planning-slot {
+    margin-top: var(--spacing-xs);
+}
+
+.planning-slot:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.planning-slot--loisir {
+    background: linear-gradient(135deg, var(--color-cyan), #0090B8);
+}
+
+.planning-slot--jeunes {
+    background: linear-gradient(135deg, #FF8A50, var(--color-accent));
+}
+
+.planning-slot--compet {
+    background: linear-gradient(135deg, #007A91, var(--color-teal));
+}
+
+.planning-hours {
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.planning-label {
+    font-size: 0.85rem;
+    opacity: 0.95;
+}
+
+.planning-place {
+    font-size: 0.78rem;
+    opacity: 0.85;
+}
+
+.planning-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    color: var(--gray-medium);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: -1px;
+}
+
+.legend-dot--loisir { background: var(--color-cyan); }
+.legend-dot--jeunes { background: var(--color-accent); }
+.legend-dot--compet { background: var(--color-teal); }
+
+@media (max-width: 1024px) {
+    .planning {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .planning {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* === TIMELINE (a propos) === */
+.timeline {
+    position: relative;
+    max-width: 900px;
+    margin: var(--spacing-lg) auto 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 8px;
+    bottom: 8px;
+    width: 4px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, var(--color-cyan), var(--color-accent));
+    border-radius: 2px;
+}
+
+.timeline-item {
+    position: relative;
+    width: 50%;
+    padding: 0 var(--spacing-lg) var(--spacing-lg) 0;
+}
+
+.timeline-item:nth-child(even) {
+    left: 50%;
+    padding: 0 0 var(--spacing-lg) var(--spacing-lg);
+}
+
+/* Resserre l'alternance gauche/droite pour limiter les vides */
+.timeline-item:not(:first-child) {
+    margin-top: -5.5rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateX(50%);
+    background: var(--color-teal);
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    z-index: 1;
+    white-space: nowrap;
+}
+
+.timeline-item:nth-child(even) .timeline-marker {
+    right: auto;
+    left: 0;
+    transform: translateX(-50%);
+}
+
+.timeline-content {
+    background: var(--white);
+    border: 1px solid var(--gray-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+    margin-top: 2.8rem;
+    transition: var(--transition-normal);
+}
+
+.timeline-content:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.timeline-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.timeline-content p {
+    color: var(--gray-medium);
+    margin-bottom: 0;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .timeline::before {
+        left: 10px;
+        transform: none;
+    }
+
+    .timeline-item,
+    .timeline-item:nth-child(even) {
+        width: 100%;
+        left: 0;
+        padding: 0 0 var(--spacing-lg) calc(var(--spacing-lg) + 10px);
+    }
+
+    /* En pile : pas de chevauchement */
+    .timeline-item:not(:first-child) {
+        margin-top: 0;
+    }
+
+    .timeline-marker,
+    .timeline-item:nth-child(even) .timeline-marker {
+        right: auto;
+        left: 10px;
+        transform: translateX(-50%);
+    }
+}
+
+/* === CARTES GOOGLE MAPS === */
+.map-embed {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-top: var(--spacing-sm);
+    aspect-ratio: 16 / 10;
+}
+
+.map-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* === PAGE 404 === */
+.error-code {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(6rem, 20vw, 11rem);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--color-cyan), var(--color-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--spacing-sm);
+}
