@@ -227,16 +227,30 @@ function init() {
             const cancelEvents = ['wheel', 'touchstart', 'keydown'];
             cancelEvents.forEach(ev => window.addEventListener(ev, cancel, { passive: true, once: true }));
 
+            // Neutralise le scroll-behavior: smooth du html pendant le
+            // pilotage manuel : sinon chaque scrollTo de frame declenche
+            // un lissage natif et les pas se marchent dessus (sur-place
+            // puis saut brutal a la fin)
+            document.documentElement.style.scrollBehavior = 'auto';
+
+            const cleanup = () => {
+                document.documentElement.style.scrollBehavior = '';
+                cancelEvents.forEach(ev => window.removeEventListener(ev, cancel));
+            };
+
             const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
             function step(now) {
-                if (cancelled) return;
+                if (cancelled) {
+                    cleanup();
+                    return;
+                }
                 const progress = Math.min((now - startTime) / duration, 1);
                 window.scrollTo(0, startY + distance * easeInOutCubic(progress));
                 if (progress < 1) {
                     requestAnimationFrame(step);
                 } else {
-                    cancelEvents.forEach(ev => window.removeEventListener(ev, cancel));
+                    cleanup();
                 }
             }
 
