@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réserver — ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .cal-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+        .cal-nav h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--color-teal);
+            text-transform: capitalize;
+        }
+        .cal-nav button {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-sm, 6px);
+            padding: 0.4rem 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--color-teal);
+            transition: background 0.2s;
+        }
+        .cal-nav button:hover {
+            background: var(--bg-light, #EFF9FC);
+        }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e0e0e0;
+            border-radius: var(--radius-lg, 12px);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .cal-header {
+            background: var(--color-teal);
+            color: #fff;
+            text-align: center;
+            padding: 0.5rem 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .cal-day {
+            background: #fff;
+            min-height: 100px;
+            padding: 0.35rem;
+            vertical-align: top;
+            position: relative;
+        }
+        .cal-day.other-month {
+            background: #f9f9f9;
+        }
+        .cal-day.today {
+            background: var(--bg-light, #EFF9FC);
+        }
+        .cal-day.past {
+            opacity: 0.4;
+        }
+        .cal-day-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-medium, #666);
+            margin-bottom: 0.25rem;
+            padding-left: 0.15rem;
+        }
+        .cal-day.today .cal-day-number {
+            color: var(--color-cyan);
+        }
+        .cal-slot {
+            display: block;
+            padding: 0.3rem 0.4rem;
+            margin-bottom: 0.2rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            line-height: 1.3;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+        .cal-slot:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+        .cal-slot--available {
+            background: linear-gradient(135deg, var(--color-cyan), var(--color-teal));
+            color: #fff;
+        }
+        .cal-slot--forfait {
+            background: linear-gradient(135deg, #c0392b, #7d241a);
+            color: #fff;
+        }
+        .cal-slot--forfait-locked {
+            background: #e0b4b0;
+            color: #732018;
+            cursor: not-allowed;
+        }
+        .cal-slot--forfait-locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .cal-slot--booked {
+            background: #27ae60;
+            color: #fff;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #27ae60;
+        }
+        .cal-slot--full {
+            background: #ddd;
+            color: #888;
+            cursor: default;
+        }
+        .cal-slot--full:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .cal-slot-time {
+            font-weight: 700;
+        }
+        .cal-slot-info {
+            opacity: 0.9;
+        }
+
+        .cal-legend {
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: var(--gray-medium, #666);
+            flex-wrap: wrap;
+        }
+        .cal-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .cal-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .cal-legend-dot--available {
+            background: linear-gradient(135deg, var(--color-cyan), var(--color-teal));
+        }
+        .cal-legend-dot--booked {
+            background: #27ae60;
+            box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px #27ae60;
+        }
+        .cal-legend-dot--full {
+            background: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .cal-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            .cal-day {
+                min-height: 70px;
+                padding: 0.2rem;
+            }
+            .cal-slot {
+                font-size: 0.6rem;
+                padding: 0.2rem;
+            }
+            .cal-header {
+                font-size: 0.65rem;
+                padding: 0.4rem 0.1rem;
+            }
+            .cal-day-number {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="dashboard-content">
+            <h1>Réserver un cours particulier</h1>
+
+            <div id="payment-feedback"></div>
+
+            <div class="cal-nav">
+                <button id="cal-prev"><i class="fas fa-chevron-left"></i></button>
+                <h2 id="cal-title"></h2>
+                <button id="cal-next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div id="forfait-banner" style="display:none; background:#fce8e6; border-left:4px solid #c0392b; padding:0.75rem 1rem; border-radius:6px; margin-bottom:1rem;">
+                <i class="fas fa-ticket" style="color:#c0392b;"></i>
+                <strong id="forfait-quota-text"></strong>
+            </div>
+
+            <div class="cal-legend">
+                <div class="cal-legend-item"><span class="cal-legend-dot cal-legend-dot--available"></span> Disponible</div>
+                <div class="cal-legend-item" id="legend-forfait" style="display:none;"><span class="cal-legend-dot" style="background:linear-gradient(135deg,#c0392b,#7d241a);"></span> Forfait indiv</div>
+                <div class="cal-legend-item"><span class="cal-legend-dot cal-legend-dot--booked"></span> Réservé par vous</div>
+                <div class="cal-legend-item"><span class="cal-legend-dot cal-legend-dot--full"></span> Complet</div>
+            </div>
+
+            <div id="calendar-container"></div>
+
+            <div class="empty-state" id="slots-empty" style="display: none;">
+                <i class="fas fa-calendar-times"></i>
+                <p>Aucun créneau disponible ce mois-ci</p>
+            </div>
+
+            <div id="slot-detail" style="display: none; margin-top: 1.5rem;"></div>
+
+            <div class="modal-overlay" id="book-modal">
+                <div class="modal">
+                    <h2>Confirmer la réservation</h2>
+                    <div id="book-details"></div>
+                    <button type="button" class="btn btn-outline" id="btn-cancel-book" style="width: 100%; margin-top: 0.75rem;">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+        const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+        let currentMonth, currentYear;
+        let allSlots = [];
+        let myBookings = [];
+        let selectedSlot = null;
+
+        const user = requireAuth();
+        if (user) {
+            buildSidebar(user, 'bookings');
+
+            const params = new URLSearchParams(window.location.search);
+            const feedback = document.getElementById('payment-feedback');
+            if (params.get('payment') === 'success') {
+                feedback.innerHTML = '<div class="stat-card success" style="margin-bottom: 1.5rem;"><strong><i class="fas fa-check-circle"></i> Paiement effectué !</strong> Votre réservation est confirmée.</div>';
+                window.history.replaceState({}, '', window.location.pathname);
+            } else if (params.get('payment') === 'cancel') {
+                const cancelId = params.get('booking_id');
+                if (cancelId) {
+                    apiFetch(`/bookings/${cancelId}`, { method: 'DELETE' }).then(() => {
+                        feedback.innerHTML = '<div class="stat-card warning" style="margin-bottom: 1.5rem;"><strong><i class="fas fa-exclamation-circle"></i> Paiement annulé.</strong> La réservation a été supprimée.</div>';
+                        loadData();
+                    });
+                } else {
+                    feedback.innerHTML = '<div class="stat-card warning" style="margin-bottom: 1.5rem;"><strong><i class="fas fa-exclamation-circle"></i> Paiement annulé.</strong></div>';
+                }
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+
+            const now = new Date();
+            currentMonth = now.getMonth();
+            currentYear = now.getFullYear();
+            loadData();
+        }
+
+        document.getElementById('btn-cancel-book').addEventListener('click', () => {
+            document.getElementById('book-modal').classList.remove('visible');
+        });
+        document.getElementById('book-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        document.getElementById('cal-prev').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        });
+        document.getElementById('cal-next').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            renderCalendar();
+        });
+
+        let currentQuota = null;
+        async function loadData() {
+            const [slotsRes, bookingsRes, meRes] = await Promise.all([
+                apiFetch('/slots'),
+                apiFetch('/bookings?status=confirmed&upcoming=true'),
+                apiFetch('/auth/me'),
+            ]);
+            if (!slotsRes || !slotsRes.ok) return;
+            allSlots = await slotsRes.json();
+            const allBookings = bookingsRes && bookingsRes.ok ? await bookingsRes.json() : [];
+            myBookings = allBookings.filter(b => b.user_id === user.id);
+
+            if (meRes && meRes.ok) {
+                const me = await meRes.json();
+                currentQuota = me.forfait_indiv_quota;
+                const banner = document.getElementById('forfait-banner');
+                const legend = document.getElementById('legend-forfait');
+                if (currentQuota !== null) {
+                    banner.style.display = 'block';
+                    legend.style.display = '';
+                    document.getElementById('forfait-quota-text').textContent =
+                        currentQuota > 0
+                            ? `Forfait individuel : ${currentQuota} créneau${currentQuota > 1 ? 'x' : ''} restant${currentQuota > 1 ? 's' : ''}`
+                            : 'Forfait individuel : quota épuisé';
+                } else {
+                    banner.style.display = 'none';
+                    legend.style.display = 'none';
+                }
+            }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            document.getElementById('cal-title').textContent = `${MONTHS[currentMonth]} ${currentYear}`;
+
+            const bookedSlotIds = new Set(myBookings.map(b => b.slot_id));
+            const slotsByDate = {};
+            allSlots.forEach(s => {
+                if (!slotsByDate[s.date]) slotsByDate[s.date] = [];
+                slotsByDate[s.date].push(s);
+            });
+
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            let startDow = firstDay.getDay();
+            startDow = startDow === 0 ? 6 : startDow - 1;
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const prevMonthDays = new Date(currentYear, currentMonth, 0).getDate();
+
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+            let html = '<div class="cal-grid">';
+            DAYS.forEach(d => { html += `<div class="cal-header">${d}</div>`; });
+
+            const totalCells = Math.ceil((startDow + daysInMonth) / 7) * 7;
+            let hasSlots = false;
+
+            for (let i = 0; i < totalCells; i++) {
+                let day, dateStr, isOtherMonth = false;
+
+                if (i < startDow) {
+                    day = prevMonthDays - startDow + i + 1;
+                    const m = currentMonth === 0 ? 12 : currentMonth;
+                    const y = currentMonth === 0 ? currentYear - 1 : currentYear;
+                    dateStr = `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                    isOtherMonth = true;
+                } else if (i - startDow >= daysInMonth) {
+                    day = i - startDow - daysInMonth + 1;
+                    const m = currentMonth + 2 > 12 ? 1 : currentMonth + 2;
+                    const y = currentMonth + 2 > 12 ? currentYear + 1 : currentYear;
+                    dateStr = `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                    isOtherMonth = true;
+                } else {
+                    day = i - startDow + 1;
+                    dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                }
+
+                const isToday = dateStr === todayStr;
+                const isPast = dateStr < todayStr;
+                let classes = 'cal-day';
+                if (isOtherMonth) classes += ' other-month';
+                if (isToday) classes += ' today';
+                if (isPast) classes += ' past';
+
+                html += `<div class="${classes}">`;
+                html += `<div class="cal-day-number">${day}</div>`;
+
+                const daySlots = slotsByDate[dateStr] || [];
+                daySlots.forEach(s => {
+                    const places = s.max_capacity - s.booking_count;
+                    const isBooked = bookedSlotIds.has(s.id);
+                    const isFull = places <= 0 && !isBooked;
+                    const isForfait = s.audience === 'forfait_indiv';
+                    const quotaOut = isForfait && currentQuota !== null && currentQuota <= 0 && !isBooked;
+                    hasSlots = true;
+
+                    let slotClass = 'cal-slot ';
+                    if (isBooked) slotClass += 'cal-slot--booked';
+                    else if (isFull) slotClass += 'cal-slot--full';
+                    else if (quotaOut) slotClass += 'cal-slot--forfait-locked';
+                    else if (isForfait) slotClass += 'cal-slot--forfait';
+                    else slotClass += 'cal-slot--available';
+
+                    let statusIcon = '';
+                    if (isBooked) statusIcon = '<i class="fas fa-check-circle"></i> ';
+                    else if (isFull) statusIcon = '<i class="fas fa-lock"></i> ';
+                    else if (quotaOut) statusIcon = '<i class="fas fa-ban"></i> ';
+                    else if (isForfait) statusIcon = '<i class="fas fa-ticket"></i> ';
+
+                    let subLabel;
+                    if (isBooked) subLabel = 'Réservé';
+                    else if (isFull) subLabel = 'Complet';
+                    else if (quotaOut) subLabel = 'Quota atteint';
+                    else subLabel = s.location;
+
+                    const onclick = isPast || isFull || quotaOut ? '' : isBooked
+                        ? `onclick="showBooked(${s.id})"`
+                        : `onclick="openBooking(${s.id})"`;
+
+                    html += `<button class="${slotClass}" ${onclick}>
+                        <span class="cal-slot-time">${statusIcon}${s.start_time}</span><br>
+                        <span class="cal-slot-info">${subLabel}</span>
+                    </button>`;
+                });
+
+                html += '</div>';
+            }
+
+            html += '</div>';
+
+            document.getElementById('calendar-container').innerHTML = html;
+            document.getElementById('slots-empty').style.display = hasSlots ? 'none' : 'flex';
+        }
+
+        async function showBooked(slotId) {
+            const s = allSlots.find(x => x.id === slotId);
+            const booking = myBookings.find(b => b.slot_id === slotId);
+            if (!s || !booking) return;
+
+            const payLabel = booking.payment_status === 'paid'
+                ? '<span class="badge-status badge-paid">Payé</span>'
+                : booking.payment_method === 'cash'
+                    ? '<span class="badge-status badge-pending">Espèces à régler</span>'
+                    : '<span class="badge-status badge-pending">Paiement en cours</span>';
+
+            let participantsHtml = '';
+            const r = await apiFetch(`/slots/${slotId}`);
+            if (r && r.ok) {
+                const data = await r.json();
+                participantsHtml = renderParticipants(data.participants, data.max_capacity);
+            }
+
+            const detail = document.getElementById('slot-detail');
+            detail.style.display = 'block';
+            detail.innerHTML = `
+                <div class="stat-card" style="border-left: 4px solid #27ae60;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 0.5rem;">
+                        <div>
+                            <strong>${formatDate(s.date)}</strong> à ${s.start_time}<br>
+                            <span style="color: var(--gray-medium);">${s.location} · ${s.duration_min} min · ${formatCents(s.price_cents)}</span><br>
+                            <span class="badge-status badge-paid" style="font-size: 0.85rem;"><i class="fas fa-check"></i> Réservé</span>
+                            ${payLabel}
+                            ${participantsHtml}
+                        </div>
+                        <button class="btn btn-outline" style="padding: 0.35rem 1rem; font-size: 0.85rem; color: #e74c3c;" onclick="cancelBooking(${booking.id})">
+                            <i class="fas fa-times"></i> Annuler
+                        </button>
+                    </div>
+                </div>`;
+            detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function renderParticipants(participants, maxCapacity) {
+            if (!participants || participants.length === 0) {
+                return `<p style="color: var(--gray-medium); font-size: 0.85rem;"><i class="fas fa-user-friends"></i> Aucun inscrit pour le moment</p>`;
+            }
+            const names = participants.map(p =>
+                p.first_name && p.last_name ? `${p.first_name} ${p.last_name}` : 'Membre'
+            );
+            const places = maxCapacity - participants.length;
+            return `
+                <div style="margin-top: 0.5rem; font-size: 0.85rem;">
+                    <strong><i class="fas fa-user-friends"></i> Inscrits (${participants.length}/${maxCapacity}) :</strong>
+                    <ul style="margin: 0.3rem 0 0 1.2rem; padding: 0; list-style: disc;">
+                        ${names.map(n => `<li>${n}</li>`).join('')}
+                    </ul>
+                    ${places > 0 ? `<p style="color: var(--color-teal); margin-top: 0.3rem;">${places} place${places > 1 ? 's' : ''} restante${places > 1 ? 's' : ''}</p>` : ''}
+                </div>`;
+        }
+
+        async function openBooking(slotId) {
+            const [slotRes, previewRes] = await Promise.all([
+                apiFetch(`/slots/${slotId}`),
+                apiFetch(`/bookings/preview/${slotId}`),
+            ]);
+            if (!slotRes || !slotRes.ok) return;
+            selectedSlot = await slotRes.json();
+            const preview = previewRes && previewRes.ok ? await previewRes.json() : null;
+
+            const isForfait = preview && preview.is_forfait;
+            let priceBlock = '';
+            let paymentBlock = '';
+            const applied = preview ? preview.applied_credit_cents : 0;
+            const due = preview ? preview.amount_due_cents : selectedSlot.price_cents;
+
+            if (isForfait) {
+                priceBlock = '';
+                paymentBlock = `
+                    <button class="btn btn-primary" id="btn-confirm-forfait" style="width:100%; margin-top:1rem;">
+                        <i class="fas fa-check"></i> Confirmer
+                    </button>`;
+            } else if (preview && applied > 0) {
+                priceBlock = `
+                    <div style="background: var(--bg-light); padding: 0.75rem; border-radius: 6px; margin: 0.75rem 0;">
+                        <div style="display:flex; justify-content:space-between;"><span>Prix du créneau</span><strong>${formatCents(preview.price_cents)}</strong></div>
+                        <div style="display:flex; justify-content:space-between; color:#27ae60;"><span>Solde appliqué</span><strong>− ${formatCents(applied)}</strong></div>
+                        <hr style="margin:0.5rem 0; border-color:#ddd;">
+                        <div style="display:flex; justify-content:space-between; font-size:1.15rem;"><span><strong>À payer</strong></span><strong style="color:var(--color-teal);">${formatCents(due)}</strong></div>
+                        <div style="font-size:0.8rem; color:var(--gray-medium); margin-top:0.35rem;">Solde disponible : ${formatCents(preview.balance_cents)}</div>
+                    </div>`;
+            } else {
+                priceBlock = `<p style="font-size: 1.3rem; font-weight: 700; color: var(--color-teal);">${formatCents(selectedSlot.price_cents)}</p>`;
+            }
+
+            if (!isForfait) {
+                if (due === 0) {
+                    paymentBlock = `
+                        <button class="btn btn-primary" id="btn-confirm-balance" style="width:100%; margin-top:1rem;">
+                            <i class="fas fa-check"></i> Confirmer (payé par le solde)
+                        </button>`;
+                } else {
+                    paymentBlock = `
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label>Mode de paiement du reste (${formatCents(due)})</label>
+                            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                                <button class="btn btn-primary" id="btn-pay-card" style="flex: 1;">
+                                    <i class="fas fa-credit-card"></i> Payer par carte
+                                </button>
+                                <button class="btn btn-outline" id="btn-pay-cash" style="flex: 1;">
+                                    <i class="fas fa-coins"></i> Espèces
+                                </button>
+                            </div>
+                        </div>`;
+                }
+            }
+
+            const forfaitNotice = selectedSlot.audience === 'forfait_indiv'
+                ? `<p style="background:#fce8e6; padding:0.5rem 0.75rem; border-radius:6px; border-left:3px solid #c0392b;"><i class="fas fa-ticket"></i> <strong>Créneau forfait individuel</strong> — un créneau sera déduit de votre quota${currentQuota !== null ? ` (${currentQuota} restant${currentQuota > 1 ? 's' : ''})` : ''}.</p>`
+                : '';
+
+            document.getElementById('book-details').innerHTML = `
+                <p><strong>${formatDate(selectedSlot.date)}</strong> à ${selectedSlot.start_time}</p>
+                <p>${selectedSlot.location} · ${selectedSlot.duration_min} min</p>
+                ${forfaitNotice}
+                ${priceBlock}
+                ${renderParticipants(selectedSlot.participants, selectedSlot.max_capacity)}
+                ${paymentBlock}
+            `;
+            document.getElementById('book-modal').classList.add('visible');
+
+            const btnCard = document.getElementById('btn-pay-card');
+            const btnCash = document.getElementById('btn-pay-cash');
+            const btnBalance = document.getElementById('btn-confirm-balance');
+            const btnForfait = document.getElementById('btn-confirm-forfait');
+            // On envoie 'card' même si couvert par solde (le back force effectiveMethod=balance)
+            if (btnCard) btnCard.addEventListener('click', () => book('card'));
+            if (btnCash) btnCash.addEventListener('click', () => book('cash'));
+            if (btnBalance) btnBalance.addEventListener('click', () => book('card'));
+            if (btnForfait) btnForfait.addEventListener('click', () => book('card'));
+        }
+
+        async function book(method) {
+            if (!selectedSlot) return;
+            const res = await apiFetch('/bookings', {
+                method: 'POST',
+                body: JSON.stringify({ slot_id: selectedSlot.id, payment_method: method }),
+            });
+            const data = await res?.json();
+
+            if (!res || !res.ok) {
+                const baseMsg = data?.error || 'Erreur lors de la réservation';
+                if (res && res.status === 409) {
+                    // Conflit : créneau plein / déjà réservé pendant qu'on hésitait
+                    showToast(baseMsg + ' — actualisation du calendrier…', 'error');
+                    document.getElementById('book-modal').classList.remove('visible');
+                    setTimeout(() => loadData(), 1500);
+                } else {
+                    showToast(baseMsg, 'error');
+                }
+                return;
+            }
+
+            document.getElementById('book-modal').classList.remove('visible');
+
+            if (data.checkout_url) {
+                window.location.href = data.checkout_url;
+            } else {
+                showToast(data.message || 'Réservation confirmée');
+                loadData();
+            }
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Annuler cette réservation ?')) return;
+            const res = await apiFetch(`/bookings/${id}`, { method: 'DELETE' });
+            const data = await res?.json();
+            if (res && res.ok) {
+                if (data.has_credit) {
+                    const feedback = document.getElementById('payment-feedback');
+                    feedback.innerHTML = `<div class="stat-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--primary);"><strong><i class="fas fa-receipt"></i> ${data.message}</strong></div>`;
+                }
+                document.getElementById('slot-detail').style.display = 'none';
+                showToast(data.message);
+                loadData();
+            } else {
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créneaux — Admin ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-shield-alt"></i> Administration</h2>
+                <p id="admin-name"></p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="./"><i class="fas fa-chart-line"></i> Tableau de bord</a></li>
+                <li><a href="./slots.html" class="active"><i class="fas fa-calendar-plus"></i> Créneaux</a></li>
+                <li><a href="./bookings.html"><i class="fas fa-bookmark"></i> Réservations</a></li>
+                <li><a href="./members.html"><i class="fas fa-users"></i> Membres</a></li>
+                <li><a href="./payments.html"><i class="fas fa-euro-sign"></i> Paiements</a></li>
+                <li><a href="./actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></li>
+                            <li style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.5rem;"><a href="../member/bookings.html"><i class="fas fa-calendar-check"></i> Réserver un cours</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                <a href="#" id="logout-btn" style="margin-top: 0.5rem;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </aside>
+
+        <div class="dashboard-content">
+            <h1>Gestion des créneaux</h1>
+
+            <div class="toolbar">
+                <button class="btn btn-primary" id="btn-add-slot"><i class="fas fa-plus"></i> Nouveau créneau</button>
+            </div>
+
+            <table class="data-table" id="slots-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Durée</th>
+                        <th>Lieu</th>
+                        <th>Prix</th>
+                        <th>Public</th>
+                        <th>Places</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="slots-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="slots-empty" style="display: none;">
+                <i class="fas fa-calendar-times"></i>
+                <p>Aucun créneau à venir</p>
+            </div>
+
+            <div class="modal-overlay" id="slot-modal">
+                <div class="modal">
+                    <h2 id="modal-title">Nouveau créneau</h2>
+                    <form id="slot-form">
+                        <input type="hidden" id="slot-id">
+
+                        <div style="margin-bottom:1.25rem;">
+                            <label style="display:block; margin-bottom:0.4rem; font-size:0.85rem; font-weight:600; color:var(--color-teal);">Public</label>
+                            <div style="display:inline-flex; gap:1.25rem; align-items:center;">
+                                <label style="display:inline-flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                                    <input type="radio" name="slot-audience" value="adherent" checked style="width:auto; margin:0; padding:0; border:none;"> Adhérents
+                                </label>
+                                <label style="display:inline-flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                                    <input type="radio" name="slot-audience" value="forfait_indiv" style="width:auto; margin:0; padding:0; border:none;"> Forfait individuel
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="slot-date">Date</label>
+                                <input type="date" id="slot-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="slot-time">Heure de début</label>
+                                <input type="time" id="slot-time" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="slot-duration">Durée (minutes)</label>
+                                <input type="number" id="slot-duration" value="60" min="15" max="240" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="slot-capacity">Places</label>
+                                <input type="number" id="slot-capacity" value="1" min="1" max="20" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="slot-location-select">Lieu</label>
+                                <select id="slot-location-select" required>
+                                    <option value="Mimoun">Mimoun</option>
+                                    <option value="Millénaire" selected>Millénaire</option>
+                                    <option value="BadPad">BadPad</option>
+                                    <option value="__other__">Autre…</option>
+                                </select>
+                                <input type="text" id="slot-location-other" placeholder="Précisez le lieu" style="margin-top:0.5rem; display:none;">
+                            </div>
+                            <div class="form-group" id="slot-price-wrap">
+                                <label for="slot-price">Prix (€)</label>
+                                <input type="number" id="slot-price" step="0.01" min="0" required placeholder="25.00">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-outline" id="btn-cancel-modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth(['admin', 'prof']);
+        if (user) {
+            document.getElementById('admin-name').textContent = user.email;
+            loadSlots();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+        const KNOWN_LOCATIONS = ['Mimoun', 'Millénaire', 'BadPad'];
+
+        document.getElementById('btn-add-slot').addEventListener('click', () => {
+            document.getElementById('slot-id').value = '';
+            document.getElementById('slot-form').reset();
+            document.querySelector('input[name="slot-audience"][value="adherent"]').checked = true;
+            document.getElementById('slot-location-select').value = 'Millénaire';
+            document.getElementById('slot-location-other').value = '';
+            document.getElementById('slot-location-other').style.display = 'none';
+            togglePriceVisibility();
+            document.getElementById('modal-title').textContent = 'Nouveau créneau';
+            document.getElementById('slot-modal').classList.add('visible');
+        });
+
+        document.getElementById('slot-location-select').addEventListener('change', function() {
+            const other = document.getElementById('slot-location-other');
+            other.style.display = this.value === '__other__' ? '' : 'none';
+            other.required = this.value === '__other__';
+        });
+
+        function togglePriceVisibility() {
+            const aud = document.querySelector('input[name="slot-audience"]:checked').value;
+            const priceWrap = document.getElementById('slot-price-wrap');
+            const priceInput = document.getElementById('slot-price');
+            if (aud === 'forfait_indiv') {
+                priceWrap.style.display = 'none';
+                priceInput.required = false;
+                priceInput.value = 0;
+            } else {
+                priceWrap.style.display = '';
+                priceInput.required = true;
+            }
+        }
+        document.querySelectorAll('input[name="slot-audience"]').forEach(r => {
+            r.addEventListener('change', togglePriceVisibility);
+        });
+
+        document.getElementById('btn-cancel-modal').addEventListener('click', () => {
+            document.getElementById('slot-modal').classList.remove('visible');
+        });
+
+        document.getElementById('slot-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        document.getElementById('slot-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('slot-id').value;
+            const audience = document.querySelector('input[name="slot-audience"]:checked').value;
+            const priceEuros = audience === 'forfait_indiv' ? 0 : parseFloat(document.getElementById('slot-price').value);
+            const locSel = document.getElementById('slot-location-select').value;
+            const location = locSel === '__other__'
+                ? document.getElementById('slot-location-other').value.trim()
+                : locSel;
+            if (!location) return showToast('Lieu requis', 'error');
+            const body = {
+                date: document.getElementById('slot-date').value,
+                start_time: document.getElementById('slot-time').value,
+                duration_min: Number(document.getElementById('slot-duration').value),
+                location,
+                max_capacity: Number(document.getElementById('slot-capacity').value),
+                price_cents: Math.round((priceEuros || 0) * 100),
+                audience,
+            };
+
+            const url = id ? `/slots/${id}` : '/slots';
+            const method = id ? 'PUT' : 'POST';
+            const res = await apiFetch(url, { method, body: JSON.stringify(body) });
+
+            if (res && res.ok) {
+                showToast(id ? 'Créneau modifié' : 'Créneau créé');
+                document.getElementById('slot-modal').classList.remove('visible');
+                loadSlots();
+            } else {
+                const data = await res?.json();
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        });
+
+        async function loadSlots() {
+            const res = await apiFetch('/slots');
+            if (!res || !res.ok) return;
+            const slots = await res.json();
+
+            const tbody = document.getElementById('slots-tbody');
+            tbody.innerHTML = '';
+
+            if (slots.length === 0) {
+                document.getElementById('slots-table').style.display = 'none';
+                document.getElementById('slots-empty').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('slots-table').style.display = '';
+            document.getElementById('slots-empty').style.display = 'none';
+
+            slots.forEach(s => {
+                const available = s.max_capacity - s.booking_count;
+                const audienceBadge = s.audience === 'forfait_indiv'
+                    ? '<span class="badge-status" style="background:#f8d7da;color:#721c24;">Forfait indiv</span>'
+                    : '<span class="badge-status" style="background:#d1ecf1;color:#0c5460;">Adhérents</span>';
+                tbody.innerHTML += `<tr>
+                    <td data-label="Date">${formatDate(s.date)}</td>
+                    <td data-label="Heure">${s.start_time}</td>
+                    <td data-label="Durée">${s.duration_min} min</td>
+                    <td data-label="Lieu">${s.location}</td>
+                    <td data-label="Prix">${formatCents(s.price_cents)}</td>
+                    <td data-label="Public">${audienceBadge}</td>
+                    <td data-label="Places">${s.booking_count}/${s.max_capacity}</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="editSlot(${s.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; color: #e74c3c;" onclick="deleteSlot(${s.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        async function editSlot(id) {
+            const res = await apiFetch(`/slots/${id}`);
+            if (!res || !res.ok) return;
+            const s = await res.json();
+
+            document.getElementById('slot-id').value = s.id;
+            document.getElementById('slot-date').value = s.date;
+            document.getElementById('slot-time').value = s.start_time;
+            document.getElementById('slot-duration').value = s.duration_min;
+            document.getElementById('slot-location').value = s.location;
+            document.getElementById('slot-capacity').value = s.max_capacity;
+            document.getElementById('slot-price').value = (s.price_cents / 100).toFixed(2);
+            const sel = document.getElementById('slot-location-select');
+            const otherInput = document.getElementById('slot-location-other');
+            if (KNOWN_LOCATIONS.includes(s.location)) {
+                sel.value = s.location;
+                otherInput.style.display = 'none';
+                otherInput.value = '';
+                otherInput.required = false;
+            } else {
+                sel.value = '__other__';
+                otherInput.value = s.location;
+                otherInput.style.display = '';
+                otherInput.required = true;
+            }
+            document.querySelector(`input[name="slot-audience"][value="${s.audience || 'adherent'}"]`).checked = true;
+            togglePriceVisibility();
+            document.getElementById('modal-title').textContent = 'Modifier le créneau';
+            document.getElementById('slot-modal').classList.add('visible');
+        }
+
+        async function deleteSlot(id) {
+            if (!confirm('Annuler ce créneau ? Les réservations seront aussi annulées.')) return;
+            const res = await apiFetch(`/slots/${id}`, { method: 'DELETE' });
+            if (res && res.ok) {
+                showToast('Créneau annulé');
+                loadSlots();
+            }
+        }
+    </script>
+</body>
+</html>

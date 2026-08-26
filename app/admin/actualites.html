@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualités — Admin ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-shield-alt"></i> Administration</h2>
+                <p id="admin-name"></p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="./"><i class="fas fa-chart-line"></i> Tableau de bord</a></li>
+                <li><a href="./slots.html"><i class="fas fa-calendar-plus"></i> Créneaux</a></li>
+                <li><a href="./bookings.html"><i class="fas fa-bookmark"></i> Réservations</a></li>
+                <li><a href="./members.html"><i class="fas fa-users"></i> Membres</a></li>
+                <li><a href="./payments.html"><i class="fas fa-euro-sign"></i> Paiements</a></li>
+                <li><a href="./actualites.html" class="active"><i class="fas fa-newspaper"></i> Actualités</a></li>
+                <li style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.5rem;"><a href="../member/bookings.html"><i class="fas fa-calendar-check"></i> Réserver un cours</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                <a href="#" id="logout-btn" style="margin-top: 0.5rem;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </aside>
+
+        <div class="dashboard-content">
+            <h1>Gestion des actualités</h1>
+
+            <div class="toolbar">
+                <button class="btn btn-primary" id="btn-add"><i class="fas fa-plus"></i> Nouvelle actualité</button>
+            </div>
+
+            <table class="data-table" id="articles-table">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">Ordre</th>
+                        <th>Date affichée</th>
+                        <th>Catégorie</th>
+                        <th>Titre</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="articles-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="articles-empty" style="display: none;">
+                <i class="fas fa-newspaper"></i>
+                <p>Aucune actualité pour le moment</p>
+            </div>
+
+            <div class="modal-overlay" id="article-modal">
+                <div class="modal">
+                    <h2 id="modal-title">Nouvelle actualité</h2>
+                    <form id="article-form">
+                        <input type="hidden" id="f-id">
+                        <div class="form-group">
+                            <label for="f-title">Titre</label>
+                            <input type="text" id="f-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-content">Contenu</label>
+                            <textarea id="f-content" rows="6" required style="width:100%;resize:vertical;padding:0.5rem;border:1px solid #ddd;border-radius:6px;font-family:inherit;font-size:0.9rem;"></textarea>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div class="form-group">
+                                <label for="f-category">Catégorie</label>
+                                <select id="f-category">
+                                    <option value="actualites">Actualités</option>
+                                    <option value="interclubs">Interclubs</option>
+                                    <option value="evenements">Événements</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="f-badge-date">Date affichée</label>
+                                <input type="text" id="f-badge-date" placeholder="ex: Juin 2026" required>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+                            <button type="submit" class="btn btn-primary" id="btn-submit" style="flex:1;"><i class="fas fa-check"></i> Publier</button>
+                            <button type="button" class="btn btn-outline" id="btn-cancel" style="flex:1;">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth(['admin']);
+        if (user) {
+            document.getElementById('admin-name').textContent = user.email;
+            document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+            loadArticles();
+        }
+
+        let articles = [];
+        const CATEGORY_LABELS = { actualites: 'Actualités', interclubs: 'Interclubs', evenements: 'Événements' };
+
+        async function loadArticles() {
+            const res = await apiFetch('/articles');
+            if (!res || !res.ok) return;
+            articles = await res.json();
+
+            const tbody = document.getElementById('articles-tbody');
+            const empty = document.getElementById('articles-empty');
+
+            if (articles.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'flex';
+                document.getElementById('articles-table').style.display = 'none';
+                return;
+            }
+
+            empty.style.display = 'none';
+            document.getElementById('articles-table').style.display = '';
+
+            tbody.innerHTML = articles.map((a, i) => `
+                <tr>
+                    <td data-label="Ordre">
+                        <button class="btn-icon" title="Monter" ${i === 0 ? 'disabled' : ''} onclick="moveArticle(${a.id}, -1)"><i class="fas fa-chevron-up"></i></button>
+                        <button class="btn-icon" title="Descendre" ${i === articles.length - 1 ? 'disabled' : ''} onclick="moveArticle(${a.id}, 1)"><i class="fas fa-chevron-down"></i></button>
+                    </td>
+                    <td data-label="Date">${a.badge_date}</td>
+                    <td data-label="Catégorie"><span class="badge ${a.category === 'interclubs' ? 'badge-secondary' : a.category === 'evenements' ? 'badge-cyan' : 'badge-primary'}">${CATEGORY_LABELS[a.category]}</span></td>
+                    <td data-label="Titre"><strong>${a.title}</strong></td>
+                    <td data-label="Actions">
+                        <button class="btn btn-outline" style="padding:0.3rem 0.75rem;font-size:0.8rem;" onclick="editArticle(${a.id})">
+                            <i class="fas fa-pen"></i> Modifier
+                        </button>
+                        <button class="btn btn-outline" style="padding:0.3rem 0.75rem;font-size:0.8rem;color:#e74c3c;" onclick="deleteArticle(${a.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function moveArticle(id, direction) {
+            const idx = articles.findIndex(a => a.id === id);
+            if (idx < 0) return;
+            const newIdx = idx + direction;
+            if (newIdx < 0 || newIdx >= articles.length) return;
+
+            const ids = articles.map(a => a.id);
+            [ids[idx], ids[newIdx]] = [ids[newIdx], ids[idx]];
+
+            const res = await apiFetch('/articles/reorder', {
+                method: 'POST',
+                body: JSON.stringify({ ids }),
+            });
+
+            if (res && res.ok) {
+                loadArticles();
+            } else {
+                showToast('Erreur lors du déplacement', 'error');
+            }
+        }
+
+        function openModal(title, article) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('f-id').value = article ? article.id : '';
+            document.getElementById('f-title').value = article ? article.title : '';
+            document.getElementById('f-content').value = article ? article.content : '';
+            document.getElementById('f-category').value = article ? article.category : 'actualites';
+            document.getElementById('f-badge-date').value = article ? article.badge_date : '';
+            document.getElementById('btn-submit').innerHTML = article
+                ? '<i class="fas fa-check"></i> Enregistrer'
+                : '<i class="fas fa-check"></i> Publier';
+            document.getElementById('article-modal').classList.add('visible');
+        }
+
+        document.getElementById('btn-add').addEventListener('click', () => {
+            openModal('Nouvelle actualité', null);
+        });
+
+        function editArticle(id) {
+            const article = articles.find(a => a.id === id);
+            if (article) openModal('Modifier l\'actualité', article);
+        }
+
+        document.getElementById('btn-cancel').addEventListener('click', () => {
+            document.getElementById('article-modal').classList.remove('visible');
+        });
+
+        document.getElementById('article-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('f-id').value;
+            const body = {
+                title: document.getElementById('f-title').value.trim(),
+                content: document.getElementById('f-content').value.trim(),
+                category: document.getElementById('f-category').value,
+                badge_date: document.getElementById('f-badge-date').value.trim(),
+            };
+
+            const url = editId ? `/articles/${editId}` : '/articles';
+            const method = editId ? 'PUT' : 'POST';
+
+            const res = await apiFetch(url, {
+                method,
+                body: JSON.stringify(body),
+            });
+
+            if (res && res.ok) {
+                document.getElementById('article-modal').classList.remove('visible');
+                showToast(editId ? 'Actualité modifiée !' : 'Actualité publiée !');
+                loadArticles();
+            } else {
+                const data = await res?.json();
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        });
+
+        async function deleteArticle(id) {
+            if (!confirm('Supprimer cette actualité ?')) return;
+            const res = await apiFetch(`/articles/${id}`, { method: 'DELETE' });
+            if (res && res.ok) {
+                showToast('Actualité supprimée');
+                loadArticles();
+            } else {
+                showToast('Erreur lors de la suppression', 'error');
+            }
+        }
+    </script>
+
+    <style>
+        .btn-icon {
+            background: none;
+            border: 1px solid var(--gray-light, #ddd);
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+            color: var(--gray-dark, #555);
+            transition: background 0.15s;
+        }
+        .btn-icon:hover:not(:disabled) { background: var(--bg-light, #f5f5f5); }
+        .btn-icon:disabled { opacity: 0.3; cursor: default; }
+    </style>
+</body>
+</html>

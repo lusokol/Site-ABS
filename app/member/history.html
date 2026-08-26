@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique — ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="dashboard-content">
+            <h1>Historique des réservations</h1>
+
+            <table class="data-table" id="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Lieu</th>
+                        <th>Prix</th>
+                        <th>Paiement</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody id="history-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="history-empty" style="display: none;">
+                <i class="fas fa-history"></i>
+                <p>Aucune réservation passée</p>
+            </div>
+
+            <h2 id="credits-title" style="display:none; margin-top: 2rem;">Mes avoirs</h2>
+            <table class="data-table" id="credits-table" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Montant</th>
+                        <th>Raison</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="credits-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth();
+        if (user) {
+            buildSidebar(user, 'history');
+            loadHistory();
+            loadCredits();
+        }
+
+        async function loadCredits() {
+            const res = await apiFetch('/credits');
+            if (!res || !res.ok) return;
+            const credits = await res.json();
+            if (credits.length === 0) return;
+
+            document.getElementById('credits-title').style.display = '';
+            document.getElementById('credits-table').style.display = '';
+            const tbody = document.getElementById('credits-tbody');
+
+            credits.forEach(c => {
+                const statusBadge = c.status === 'active'
+                    ? '<span class="badge-status badge-pending">Actif</span>'
+                    : '<span class="badge-status badge-paid">Utilisé</span>';
+                const dateStr = c.used_at
+                    ? `Utilisé le ${formatDate(c.used_at.split('T')[0])}`
+                    : formatDate(c.created_at.split('T')[0]);
+                tbody.innerHTML += `<tr>
+                    <td data-label="Montant"><strong>${formatCents(c.amount_cents)}</strong></td>
+                    <td data-label="Raison">${c.reason}</td>
+                    <td data-label="Statut">${statusBadge}</td>
+                    <td data-label="Date">${dateStr}</td>
+                </tr>`;
+            });
+        }
+
+
+        async function loadHistory() {
+            const res = await apiFetch('/bookings');
+            if (!res || !res.ok) return;
+            const bookings = await res.json();
+
+            const tbody = document.getElementById('history-tbody');
+            tbody.innerHTML = '';
+
+            if (bookings.length === 0) {
+                document.getElementById('history-table').style.display = 'none';
+                document.getElementById('history-empty').style.display = 'flex';
+                return;
+            }
+
+            bookings.forEach(b => {
+                const method = b.payment_method === 'card'
+                    ? '<i class="fas fa-credit-card"></i> Carte'
+                    : b.payment_method === 'balance'
+                        ? '<i class="fas fa-wallet"></i> Solde'
+                        : b.payment_method === 'forfait'
+                            ? '<i class="fas fa-ticket"></i> Forfait indiv'
+                            : '<i class="fas fa-coins"></i> Espèces';
+                const payBadge = b.payment_status === 'paid'
+                    ? '<span class="badge-status badge-paid">Payé</span>'
+                    : '<span class="badge-status badge-pending">En attente</span>';
+                const statusBadge = b.status === 'confirmed'
+                    ? '<span class="badge-status badge-paid">Confirmée</span>'
+                    : '<span class="badge-status badge-cancelled">Annulée</span>';
+
+                tbody.innerHTML += `<tr>
+                    <td data-label="Date">${formatDate(b.date)}</td>
+                    <td data-label="Heure">${b.start_time}</td>
+                    <td data-label="Lieu">${b.location}</td>
+                    <td data-label="Prix">${formatCents(b.price_cents)}</td>
+                    <td data-label="Paiement">${method} ${payBadge}</td>
+                    <td data-label="Statut">${statusBadge}</td>
+                </tr>`;
+            });
+        }
+    </script>
+</body>
+</html>

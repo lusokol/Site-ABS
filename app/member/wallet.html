@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon solde — ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="dashboard-content">
+            <h1>Mon solde</h1>
+
+            <div class="stat-card" style="margin-bottom: 1.5rem;">
+                <div class="stat-card-label">Solde disponible</div>
+                <div class="stat-card-value" id="balance-value" style="font-size: 2.5rem;">—</div>
+                <p style="color: var(--gray-medium); margin-top: 0.5rem; font-size: 0.9rem;">
+                    Utilisé automatiquement lors de vos réservations
+                </p>
+            </div>
+
+            <div class="stat-card" style="margin-bottom: 1.5rem;">
+                <h2 style="margin-top: 0;">Recharger mon solde</h2>
+                <p style="color: var(--gray-medium); margin-bottom: 1rem;">
+                    Créditez votre compte par carte bancaire via HelloAsso.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                    <button class="btn btn-outline preset-amount" data-amount="1000">10 €</button>
+                    <button class="btn btn-outline preset-amount" data-amount="2000">20 €</button>
+                    <button class="btn btn-outline preset-amount" data-amount="5000">50 €</button>
+                    <button class="btn btn-outline preset-amount" data-amount="10000">100 €</button>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <label for="custom-amount" style="font-weight: 600;">Autre montant :</label>
+                    <input type="number" id="custom-amount" min="1" max="500" step="1" placeholder="0" style="width: 100px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                    <span>€</span>
+                    <button class="btn btn-primary" id="btn-topup"><i class="fas fa-credit-card"></i> Recharger</button>
+                </div>
+            </div>
+
+            <h2>Historique</h2>
+            <table class="data-table" id="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Mouvement</th>
+                        <th>Montant</th>
+                        <th>Détails</th>
+                    </tr>
+                </thead>
+                <tbody id="history-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="history-empty" style="display: none;">
+                <i class="fas fa-history"></i>
+                <p>Aucun mouvement</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth();
+        if (user) {
+            buildSidebar(user, 'wallet');
+            handleTopupReturn();
+            loadWallet();
+        }
+
+        document.querySelectorAll('.preset-amount').forEach(btn => {
+            btn.addEventListener('click', () => topup(Number(btn.dataset.amount)));
+        });
+
+        document.getElementById('btn-topup').addEventListener('click', () => {
+            const euros = Number(document.getElementById('custom-amount').value);
+            if (!euros || euros < 1) return showToast('Minimum 1 €', 'error');
+            if (euros > 500) return showToast('Maximum 500 €', 'error');
+            topup(euros * 100);
+        });
+
+        function handleTopupReturn() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('topup') === 'success') {
+                showToast('Paiement reçu — votre solde sera crédité sous quelques instants');
+                window.history.replaceState({}, '', window.location.pathname);
+            } else if (params.get('topup') === 'cancel') {
+                showToast('Rechargement annulé', 'error');
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        }
+
+        async function topup(amountCents) {
+            const res = await apiFetch('/wallet/topup', {
+                method: 'POST',
+                body: JSON.stringify({ amount_cents: amountCents }),
+            });
+            if (!res || !res.ok) {
+                const data = await res?.json();
+                return showToast(data?.error || 'Erreur', 'error');
+            }
+            const { checkout_url } = await res.json();
+            window.location.href = checkout_url;
+        }
+
+        async function loadWallet() {
+            const res = await apiFetch('/wallet/me');
+            if (!res || !res.ok) return;
+            const { balance_cents, transactions } = await res.json();
+
+            document.getElementById('balance-value').textContent = formatCents(balance_cents);
+            renderHistory(transactions);
+        }
+
+        function renderHistory(txs) {
+            const tbody = document.getElementById('history-tbody');
+            tbody.innerHTML = '';
+
+            const visible = txs.filter(t => t.amount_cents !== 0);
+            if (visible.length === 0) {
+                document.getElementById('history-table').style.display = 'none';
+                document.getElementById('history-empty').style.display = 'flex';
+                return;
+            }
+            document.getElementById('history-table').style.display = '';
+            document.getElementById('history-empty').style.display = 'none';
+
+            visible.forEach(t => {
+                const dateStr = new Date(t.created_at.replace(' ', 'T') + 'Z').toLocaleString('fr-FR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+                const isCredit = t.amount_cents > 0;
+                const amountStr = (isCredit ? '+' : '') + formatCents(t.amount_cents);
+                const amountColor = isCredit ? '#27ae60' : '#c0392b';
+                const label = labelForReason(t.reason);
+                const details = detailsForTx(t);
+
+                tbody.innerHTML += `<tr>
+                    <td data-label="Date">${dateStr}</td>
+                    <td data-label="Mouvement">${label}</td>
+                    <td data-label="Montant"><strong style="color: ${amountColor};">${amountStr}</strong></td>
+                    <td data-label="Détails">${details}</td>
+                </tr>`;
+            });
+        }
+
+        function labelForReason(r) {
+            return {
+                topup: '<i class="fas fa-plus-circle" style="color: #27ae60;"></i> Rechargement',
+                booking_paid: '<i class="fas fa-calendar-check"></i> Réservation',
+                booking_cancelled: '<i class="fas fa-undo" style="color: #27ae60;"></i> Remboursement',
+                admin_adjustment: '<i class="fas fa-user-shield"></i> Ajustement admin',
+                migration: '<i class="fas fa-exchange-alt"></i> Migration',
+            }[r] || r;
+        }
+
+        function detailsForTx(t) {
+            if (t.slot_date) {
+                return `${formatDate(t.slot_date)} ${t.slot_time || ''} — ${t.slot_location || ''}`;
+            }
+            return t.note || '—';
+        }
+    </script>
+</body>
+</html>

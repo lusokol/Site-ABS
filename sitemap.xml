@@ -32,4 +32,8 @@
         <loc>https://abs91.fr/partenaires.html</loc>
         <priority>0.5</priority>
     </url>
+    <url>
+        <loc>https://abs91.fr/mentions-legales.html</loc>
+        <priority>0.3</priority>
+    </url>
 </urlset>

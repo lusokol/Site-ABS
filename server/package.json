@@ -1,0 +1,25 @@
+{
+  "name": "abs91-server",
+  "version": "1.0.0",
+  "description": "Backend API pour ABS91 - Amicale Badminton Spinolienne",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node db/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.0.0",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "helmet": "^8.0.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

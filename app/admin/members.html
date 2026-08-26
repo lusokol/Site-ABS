@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membres — Admin ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-shield-alt"></i> Administration</h2>
+                <p id="admin-name"></p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="./"><i class="fas fa-chart-line"></i> Tableau de bord</a></li>
+                <li><a href="./slots.html"><i class="fas fa-calendar-plus"></i> Créneaux</a></li>
+                <li><a href="./bookings.html"><i class="fas fa-bookmark"></i> Réservations</a></li>
+                <li><a href="./members.html" class="active"><i class="fas fa-users"></i> Membres</a></li>
+                <li><a href="./payments.html"><i class="fas fa-euro-sign"></i> Paiements</a></li>
+                <li><a href="./actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></li>
+                <li style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.5rem;"><a href="../member/bookings.html"><i class="fas fa-calendar-check"></i> Réserver un cours</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                <a href="#" id="logout-btn" style="margin-top: 0.5rem;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </aside>
+
+        <div class="dashboard-content">
+            <h1>Gestion des membres</h1>
+
+            <div class="toolbar">
+                <input type="text" class="search-input" id="search-members" placeholder="Rechercher un membre...">
+                <select id="filter-tag" class="search-input" style="max-width:220px;">
+                    <option value="">Tous les tags</option>
+                    <option value="forfait">Forfait indiv uniquement</option>
+                    <option value="no-forfait">Sans forfait indiv</option>
+                </select>
+                <select id="filter-role" class="search-input" style="max-width:180px;">
+                    <option value="">Tous les rôles</option>
+                    <option value="member">Membres</option>
+                    <option value="prof">Professeurs</option>
+                    <option value="admin">Administrateurs</option>
+                </select>
+                <button class="btn btn-primary" id="btn-invite"><i class="fas fa-user-plus"></i> Inviter</button>
+            </div>
+
+            <div id="selection-bar" style="display:none;background:var(--bg-light);padding:0.5rem 1rem;border-radius:8px;margin-bottom:1rem;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                <span id="selection-count" style="font-weight:600;"></span>
+                <button class="btn btn-outline" style="padding:0.25rem 0.75rem;font-size:0.8rem;color:#c0392b;" id="btn-add-forfait"><i class="fas fa-ticket"></i> Ajouter forfait indiv</button>
+                <button class="btn btn-outline" style="padding:0.25rem 0.75rem;font-size:0.8rem;" id="btn-remove-forfait"><i class="fas fa-ticket"></i> Retirer forfait indiv</button>
+                <button class="btn btn-outline" style="padding:0.25rem 0.75rem;font-size:0.8rem;color:#e74c3c;" id="btn-delete-selected"><i class="fas fa-trash"></i> Supprimer</button>
+            </div>
+
+            <table class="data-table" id="members-table">
+                <thead>
+                    <tr>
+                        <th style="width:35px;"><input type="checkbox" id="select-all"></th>
+                        <th style="cursor:pointer; user-select:none;" id="th-name" title="Trier par nom">
+                            Nom <span id="sort-indicator" style="opacity:0.5;">▲</span>
+                        </th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Statut</th>
+                        <th>Solde</th>
+                        <th>Réservations</th>
+                        <th>Espèces dues</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="members-tbody"></tbody>
+            </table>
+
+            <!-- Modal wallet -->
+            <div class="modal-overlay" id="wallet-modal">
+                <div class="modal" style="max-width: 780px;">
+                    <h2 id="wallet-title">Solde du membre</h2>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1rem;">
+                        <div>
+                            <span style="color:var(--gray-medium);">Solde actuel :</span>
+                            <strong id="wallet-balance" style="font-size:1.5rem; margin-left:0.5rem;">—</strong>
+                        </div>
+                        <button class="btn btn-outline" id="btn-toggle-adjust"><i class="fas fa-plus-minus"></i> Ajuster</button>
+                    </div>
+
+                    <form id="adjust-form" style="display:none; background:var(--bg-light); padding:0.75rem; border-radius:6px; margin-bottom:1rem;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="adjust-amount">Montant (€, négatif pour débit)</label>
+                                <input type="number" id="adjust-amount" step="0.01" required placeholder="ex : 10 ou -5">
+                            </div>
+                            <div class="form-group">
+                                <label for="adjust-note">Motif</label>
+                                <input type="text" id="adjust-note" required placeholder="Ex : geste commercial">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:0.5rem;">
+                            <button type="button" class="btn btn-outline" id="btn-cancel-adjust">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+
+                    <h3 style="margin-top:0.5rem;">Historique</h3>
+                    <div style="max-height:400px; overflow-y:auto;">
+                        <table class="data-table" id="wallet-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Mouvement</th>
+                                    <th>Montant</th>
+                                    <th>Détails</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wallet-history-tbody"></tbody>
+                        </table>
+                        <div id="wallet-history-empty" style="text-align:center; padding:1rem; color:var(--gray-medium); display:none;">
+                            Aucun mouvement
+                        </div>
+                    </div>
+
+                    <div style="margin-top:1rem; text-align:right;">
+                        <button class="btn btn-outline" id="btn-close-wallet">Fermer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal invitation -->
+            <div class="modal-overlay" id="invite-modal">
+                <div class="modal">
+                    <h2>Inviter des membres</h2>
+                    <form id="invite-form">
+                        <div class="form-group">
+                            <label for="invite-emails">Emails (séparés par des virgules)</label>
+                            <textarea id="invite-emails" rows="4" required placeholder="membre1@email.com, membre2@email.com, ..." style="width:100%;resize:vertical;padding:0.5rem;border:1px solid #ddd;border-radius:6px;font-family:inherit;font-size:0.9rem;"></textarea>
+                        </div>
+                        <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;">
+                            <button type="button" class="btn btn-outline" id="btn-cancel-invite">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Envoyer les invitations</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal résultat bulk invite -->
+            <div class="modal-overlay" id="result-modal">
+                <div class="modal">
+                    <h2>Résultat des invitations</h2>
+                    <div id="result-content"></div>
+                    <div id="reinvite-section" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid #eee;">
+                        <p style="margin-bottom:0.5rem;"><strong>Souhaitez-vous renvoyer l'invitation à ces personnes&nbsp;?</strong></p>
+                        <div style="display:flex;gap:0.75rem;">
+                            <button class="btn btn-primary" id="btn-reinvite-yes"><i class="fas fa-paper-plane"></i> Oui, réinviter</button>
+                            <button class="btn btn-outline" id="btn-reinvite-no">Non</button>
+                        </div>
+                    </div>
+                    <div style="margin-top:1rem;text-align:right;">
+                        <button class="btn btn-outline" id="btn-close-result">Fermer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal édition -->
+            <div class="modal-overlay" id="edit-modal">
+                <div class="modal">
+                    <h2>Modifier le membre</h2>
+                    <form id="edit-form">
+                        <input type="hidden" id="edit-id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="edit-first">Prénom</label>
+                                <input type="text" id="edit-first">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-last">Nom</label>
+                                <input type="text" id="edit-last">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="edit-phone">Téléphone</label>
+                                <input type="tel" id="edit-phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-role">Rôle</label>
+                                <select id="edit-role">
+                                    <option value="member">Membre</option>
+                                    <option value="prof">Professeur</option>
+                                    <option value="admin">Administrateur</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="border-top:1px solid #eee; padding-top:0.75rem; margin-top:0.5rem; margin-bottom:1.25rem;">
+                            <label style="display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                                <input type="checkbox" id="edit-has-forfait" style="width:auto; margin:0; padding:0; border:none;">
+                                <span id="edit-forfait-label">Forfait individuel non souscrit</span>
+                            </label>
+                            <div id="edit-quota-wrap" style="display:none; margin-top:0.5rem; align-items:center; gap:0.5rem;">
+                                <label for="edit-quota" style="margin:0; white-space:nowrap; font-size:0.85rem; font-weight:600; color:var(--color-teal);">Quota restant :</label>
+                                <input type="number" id="edit-quota" min="0" max="1000" step="1" style="width:90px;">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;">
+                            <button type="button" class="btn btn-outline" id="btn-cancel-edit">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth(['admin']);
+        if (user) {
+            document.getElementById('admin-name').textContent = user.email;
+            loadMembers();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+        let allMembers = [];
+        let selectedIds = new Set();
+        let pendingReinviteEmails = [];
+
+        // === Selection ===
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.member-cb');
+            checkboxes.forEach(cb => { cb.checked = this.checked; });
+            updateSelection();
+        });
+
+        function updateSelection() {
+            selectedIds.clear();
+            document.querySelectorAll('.member-cb:checked').forEach(cb => selectedIds.add(parseInt(cb.value)));
+            const bar = document.getElementById('selection-bar');
+            if (selectedIds.size > 0) {
+                bar.style.display = 'flex';
+                document.getElementById('selection-count').textContent = selectedIds.size + ' sélectionné' + (selectedIds.size > 1 ? 's' : '');
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        document.getElementById('btn-delete-selected').addEventListener('click', async () => {
+            const count = selectedIds.size;
+            if (!confirm(`Supprimer ${count} membre${count > 1 ? 's' : ''} ? Cette action est irréversible.`)) return;
+            let deleted = 0;
+            for (const id of selectedIds) {
+                const res = await apiFetch(`/members/${id}`, { method: 'DELETE' });
+                if (res && res.ok) deleted++;
+            }
+            showToast(`${deleted} membre${deleted > 1 ? 's' : ''} supprimé${deleted > 1 ? 's' : ''}`);
+            selectedIds.clear();
+            loadMembers();
+        });
+
+        document.getElementById('btn-add-forfait').addEventListener('click', async () => {
+            const raw = prompt(`Quota forfait individuel à attribuer aux ${selectedIds.size} membre(s) sélectionné(s) ?`, '10');
+            if (raw === null) return;
+            const quota = Number(raw);
+            if (!Number.isInteger(quota) || quota < 0 || quota > 1000) {
+                return showToast('Quota invalide (0-1000)', 'error');
+            }
+            let updated = 0;
+            for (const id of selectedIds) {
+                const res = await apiFetch(`/members/${id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ forfait_indiv_quota: quota }),
+                });
+                if (res && res.ok) updated++;
+            }
+            showToast(`Tag forfait indiv appliqué à ${updated} membre${updated > 1 ? 's' : ''}`);
+            selectedIds.clear();
+            loadMembers();
+        });
+
+        document.getElementById('btn-remove-forfait').addEventListener('click', async () => {
+            const count = selectedIds.size;
+            if (!confirm(`Retirer le tag forfait indiv de ${count} membre${count > 1 ? 's' : ''} ?`)) return;
+            let updated = 0;
+            for (const id of selectedIds) {
+                const res = await apiFetch(`/members/${id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ forfait_indiv_quota: null }),
+                });
+                if (res && res.ok) updated++;
+            }
+            showToast(`Tag retiré de ${updated} membre${updated > 1 ? 's' : ''}`);
+            selectedIds.clear();
+            loadMembers();
+        });
+
+        // === Invite modal ===
+        document.getElementById('btn-invite').addEventListener('click', () => {
+            document.getElementById('invite-form').reset();
+            document.getElementById('invite-modal').classList.add('visible');
+        });
+        document.getElementById('btn-cancel-invite').addEventListener('click', () => {
+            document.getElementById('invite-modal').classList.remove('visible');
+        });
+        document.getElementById('invite-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        document.getElementById('invite-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const raw = document.getElementById('invite-emails').value;
+            const emails = raw.split(',').map(s => s.trim()).filter(Boolean);
+            if (!emails.length) return showToast('Aucun email saisi', 'error');
+
+            document.getElementById('invite-modal').classList.remove('visible');
+
+            const res = await apiFetch('/members/bulk-invite', {
+                method: 'POST',
+                body: JSON.stringify({ emails }),
+            });
+            if (!res || !res.ok) {
+                const data = await res?.json();
+                return showToast(data?.error || 'Erreur', 'error');
+            }
+
+            const data = await res.json();
+            let html = '';
+
+            if (data.invited.length) {
+                html += `<p style="color:#27ae60;"><i class="fas fa-check-circle"></i> <strong>${data.invited.length} invitation${data.invited.length > 1 ? 's' : ''} envoyée${data.invited.length > 1 ? 's' : ''}</strong></p>`;
+                html += '<ul style="font-size:0.9rem;margin:0.25rem 0 0.75rem 1.25rem;">' + data.invited.map(e => `<li>${e}</li>`).join('') + '</ul>';
+            }
+            if (data.already_member.length) {
+                html += `<p><i class="fas fa-user-check" style="color:#2471a3;"></i> <strong>${data.already_member.length} déjà membre${data.already_member.length > 1 ? 's' : ''}</strong> (ignoré${data.already_member.length > 1 ? 's' : ''})</p>`;
+                html += '<ul style="font-size:0.9rem;margin:0.25rem 0 0.75rem 1.25rem;">' + data.already_member.map(e => `<li>${e}</li>`).join('') + '</ul>';
+            }
+            if (data.already_invited.length) {
+                html += `<p><i class="fas fa-clock" style="color:#f39c12;"></i> <strong>${data.already_invited.length} déjà invité${data.already_invited.length > 1 ? 's' : ''}</strong></p>`;
+                html += '<ul style="font-size:0.9rem;margin:0.25rem 0 0.75rem 1.25rem;">' + data.already_invited.map(e => `<li>${e}</li>`).join('') + '</ul>';
+                pendingReinviteEmails = data.already_invited;
+                document.getElementById('reinvite-section').style.display = '';
+            } else {
+                pendingReinviteEmails = [];
+                document.getElementById('reinvite-section').style.display = 'none';
+            }
+
+            if (!data.invited.length && !data.already_member.length && !data.already_invited.length) {
+                html = '<p>Aucun email valide dans la liste.</p>';
+            }
+
+            document.getElementById('result-content').innerHTML = html;
+            document.getElementById('result-modal').classList.add('visible');
+            loadMembers();
+        });
+
+        // Reinvite
+        document.getElementById('btn-reinvite-yes').addEventListener('click', async () => {
+            const res = await apiFetch('/members/bulk-reinvite', {
+                method: 'POST',
+                body: JSON.stringify({ emails: pendingReinviteEmails }),
+            });
+            if (res && res.ok) {
+                const data = await res.json();
+                showToast(`${data.reinvited.length} réinvitation${data.reinvited.length > 1 ? 's' : ''} envoyée${data.reinvited.length > 1 ? 's' : ''}`);
+            }
+            document.getElementById('reinvite-section').style.display = 'none';
+            document.getElementById('result-modal').classList.remove('visible');
+        });
+        document.getElementById('btn-reinvite-no').addEventListener('click', () => {
+            document.getElementById('reinvite-section').style.display = 'none';
+        });
+        document.getElementById('btn-close-result').addEventListener('click', () => {
+            document.getElementById('result-modal').classList.remove('visible');
+        });
+        document.getElementById('result-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        // === Edit modal ===
+        document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+            document.getElementById('edit-modal').classList.remove('visible');
+        });
+        document.getElementById('edit-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const hasForfait = document.getElementById('edit-has-forfait').checked;
+            const body = {
+                first_name: document.getElementById('edit-first').value || null,
+                last_name: document.getElementById('edit-last').value || null,
+                phone: document.getElementById('edit-phone').value || null,
+                role: document.getElementById('edit-role').value,
+                forfait_indiv_quota: hasForfait ? Number(document.getElementById('edit-quota').value || 0) : null,
+            };
+            const res = await apiFetch(`/members/${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+            if (res && res.ok) {
+                showToast('Membre modifié');
+                document.getElementById('edit-modal').classList.remove('visible');
+                loadMembers();
+            } else {
+                const data = await res?.json();
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        });
+
+        // === Members list ===
+        document.getElementById('search-members').addEventListener('input', () => renderMembers());
+        document.getElementById('filter-tag').addEventListener('change', () => renderMembers());
+        document.getElementById('filter-role').addEventListener('change', () => renderMembers());
+
+        // === Tri par nom (asc/desc) ===
+        let sortDir = 'asc';
+        document.getElementById('th-name').addEventListener('click', () => {
+            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+            document.getElementById('sort-indicator').textContent = sortDir === 'asc' ? '▲' : '▼';
+            document.getElementById('sort-indicator').style.opacity = '1';
+            renderMembers();
+        });
+
+        function formatName(m) {
+            const last = (m.last_name || '').toUpperCase();
+            const first = m.first_name
+                ? m.first_name.charAt(0).toUpperCase() + m.first_name.slice(1).toLowerCase()
+                : '';
+            const combined = [last, first].filter(Boolean).join(' ');
+            return combined || '—';
+        }
+
+        async function loadMembers() {
+            const res = await apiFetch('/members');
+            if (!res || !res.ok) return;
+            allMembers = await res.json();
+            renderMembers();
+        }
+
+        function renderMembers() {
+            const query = document.getElementById('search-members').value.toLowerCase().trim();
+            const tagFilter = document.getElementById('filter-tag').value;
+            const roleFilter = document.getElementById('filter-role').value;
+
+            const members = allMembers.filter(m => {
+                if (query) {
+                    const full = [m.first_name, m.last_name, m.email].filter(Boolean).join(' ').toLowerCase();
+                    if (!full.includes(query)) return false;
+                }
+                if (tagFilter === 'forfait' && m.forfait_indiv_quota === null) return false;
+                if (tagFilter === 'no-forfait' && m.forfait_indiv_quota !== null) return false;
+                if (roleFilter && m.role !== roleFilter) return false;
+                return true;
+            });
+
+            // Tri : nom puis prénom (locale-aware, insensible à la casse et aux accents)
+            const col = new Intl.Collator('fr', { sensitivity: 'base' });
+            members.sort((a, b) => {
+                const cmp = col.compare(a.last_name || '', b.last_name || '')
+                    || col.compare(a.first_name || '', b.first_name || '');
+                return sortDir === 'asc' ? cmp : -cmp;
+            });
+
+            const tbody = document.getElementById('members-tbody');
+            tbody.innerHTML = '';
+
+            members.forEach(m => {
+                const name = formatName(m);
+                const roleBadge = {
+                    admin: '<span class="badge-status badge-paid">Admin</span>',
+                    prof: '<span class="badge-status" style="background:#e8daef;color:#6c3483;">Prof</span>',
+                    member: '<span class="badge-status" style="background:#d6eaf8;color:#2471a3;">Membre</span>',
+                }[m.role];
+                const forfaitTag = m.forfait_indiv_quota !== null
+                    ? ` <span class="badge-status" style="background:#f8d7da;color:#721c24;" title="Quota restant / total utilisé">Forfait ${m.forfait_indiv_quota}${m.forfait_indiv_used > 0 ? ` (−${m.forfait_indiv_used})` : ''}</span>`
+                    : '';
+                const statusIcon = m.has_password
+                    ? '<i class="fas fa-check-circle" style="color:#27ae60;"></i> Actif'
+                    : '<i class="fas fa-clock" style="color:#f39c12;"></i> Invité';
+                const cashDue = m.cash_pending_cents > 0 ? `<strong style="color:var(--color-accent);">${formatCents(m.cash_pending_cents)}</strong>` : '—';
+
+                const checked = selectedIds.has(m.id) ? 'checked' : '';
+
+                let actions = `<button class="btn btn-outline" style="padding:0.25rem 0.5rem;font-size:0.8rem;" onclick="openWallet(${m.id},'${esc(fullNameOrEmail(m))}')" title="Solde & historique"><i class="fas fa-wallet"></i></button> `;
+                actions += `<button class="btn btn-outline" style="padding:0.25rem 0.5rem;font-size:0.8rem;" onclick="editMember(${m.id},'${esc(m.first_name)}','${esc(m.last_name)}','${esc(m.phone)}','${m.role}')" title="Modifier"><i class="fas fa-edit"></i></button> `;
+
+                if (!m.has_password) {
+                    actions += `<button class="btn btn-outline" style="padding:0.25rem 0.5rem;font-size:0.8rem;" onclick="reinvite(${m.id})" title="Renvoyer l'invitation"><i class="fas fa-paper-plane"></i></button> `;
+                }
+
+                actions += `<button class="btn btn-outline" style="padding:0.25rem 0.5rem;font-size:0.8rem;color:#e74c3c;" onclick="deleteMember(${m.id},'${esc(m.email)}')" title="Supprimer"><i class="fas fa-trash"></i></button>`;
+
+                const balance = m.balance_cents > 0
+                    ? `<strong style="color:#27ae60;">${formatCents(m.balance_cents)}</strong>`
+                    : (m.balance_cents < 0
+                        ? `<strong style="color:#c0392b;">${formatCents(m.balance_cents)}</strong>`
+                        : '—');
+
+                tbody.innerHTML += `<tr class="row-selectable" data-member-id="${m.id}" style="cursor:pointer;">
+                    <td><input type="checkbox" class="member-cb" value="${m.id}" ${checked} onchange="updateSelection()" onclick="event.stopPropagation()"></td>
+                    <td data-label="Nom">${name}</td>
+                    <td data-label="Email">${m.email}</td>
+                    <td data-label="Rôle">${roleBadge}${forfaitTag}</td>
+                    <td data-label="Statut">${statusIcon}</td>
+                    <td data-label="Solde">${balance}</td>
+                    <td data-label="Réservations">${m.total_bookings}</td>
+                    <td data-label="Espèces dues">${cashDue}</td>
+                    <td>${actions}</td>
+                </tr>`;
+            });
+
+            document.getElementById('select-all').checked = false;
+            updateSelection();
+
+            // Click sur la ligne = toggle checkbox (sauf clic sur bouton d'action)
+            tbody.querySelectorAll('tr.row-selectable').forEach(tr => {
+                tr.addEventListener('click', (e) => {
+                    if (e.target.closest('button, a, input')) return;
+                    const cb = tr.querySelector('.member-cb');
+                    if (cb) {
+                        cb.checked = !cb.checked;
+                        updateSelection();
+                    }
+                });
+            });
+        }
+
+        function esc(s) { return (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+        function fullNameOrEmail(m) {
+            return [m.first_name, m.last_name].filter(Boolean).join(' ') || m.email;
+        }
+
+        // === Wallet modal ===
+        let currentWalletUserId = null;
+
+        function openWallet(userId, displayName) {
+            currentWalletUserId = userId;
+            document.getElementById('wallet-title').textContent = 'Solde — ' + displayName;
+            document.getElementById('wallet-modal').classList.add('visible');
+            document.getElementById('adjust-form').style.display = 'none';
+            document.getElementById('adjust-form').reset();
+            loadWallet();
+        }
+
+        async function loadWallet() {
+            const res = await apiFetch(`/wallet/${currentWalletUserId}`);
+            if (!res || !res.ok) return;
+            const { balance_cents, transactions } = await res.json();
+
+            document.getElementById('wallet-balance').textContent = formatCents(balance_cents);
+            document.getElementById('wallet-balance').style.color = balance_cents < 0 ? '#c0392b' : (balance_cents > 0 ? '#27ae60' : '');
+
+            const tbody = document.getElementById('wallet-history-tbody');
+            tbody.innerHTML = '';
+            const visible = transactions.filter(t => t.amount_cents !== 0);
+            if (!visible.length) {
+                document.getElementById('wallet-history-table').style.display = 'none';
+                document.getElementById('wallet-history-empty').style.display = '';
+                return;
+            }
+            document.getElementById('wallet-history-table').style.display = '';
+            document.getElementById('wallet-history-empty').style.display = 'none';
+
+            visible.forEach(t => {
+                const dateStr = new Date(t.created_at.replace(' ', 'T') + 'Z').toLocaleString('fr-FR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+                const isCredit = t.amount_cents > 0;
+                const amountStr = (isCredit ? '+' : '') + formatCents(t.amount_cents);
+                const color = isCredit ? '#27ae60' : '#c0392b';
+                const label = ({
+                    topup: 'Rechargement',
+                    booking_paid: 'Réservation',
+                    booking_cancelled: 'Remboursement',
+                    admin_adjustment: `Ajustement ${t.admin_email ? '(' + t.admin_email + ')' : ''}`,
+                    migration: 'Migration (ancien avoir)',
+                }[t.reason]) || t.reason;
+                const details = t.slot_date
+                    ? `${formatDate(t.slot_date)} ${t.slot_time || ''} — ${t.slot_location || ''}`
+                    : (t.note || '—');
+                tbody.innerHTML += `<tr>
+                    <td data-label="Date">${dateStr}</td>
+                    <td data-label="Mouvement">${label}</td>
+                    <td data-label="Montant"><strong style="color:${color};">${amountStr}</strong></td>
+                    <td data-label="Détails">${details}</td>
+                </tr>`;
+            });
+        }
+
+        document.getElementById('btn-toggle-adjust').addEventListener('click', () => {
+            const f = document.getElementById('adjust-form');
+            f.style.display = f.style.display === 'none' ? '' : 'none';
+        });
+        document.getElementById('btn-cancel-adjust').addEventListener('click', () => {
+            document.getElementById('adjust-form').style.display = 'none';
+        });
+        document.getElementById('adjust-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const euros = parseFloat(document.getElementById('adjust-amount').value);
+            const note = document.getElementById('adjust-note').value.trim();
+            if (!euros || isNaN(euros)) return showToast('Montant invalide', 'error');
+            if (!note) return showToast('Motif requis', 'error');
+            const amountCents = Math.round(euros * 100);
+
+            const res = await apiFetch(`/wallet/${currentWalletUserId}/adjust`, {
+                method: 'POST',
+                body: JSON.stringify({ amount_cents: amountCents, note }),
+            });
+            if (!res || !res.ok) {
+                const data = await res?.json();
+                return showToast(data?.error || 'Erreur', 'error');
+            }
+            showToast('Ajustement enregistré');
+            document.getElementById('adjust-form').reset();
+            document.getElementById('adjust-form').style.display = 'none';
+            loadWallet();
+            loadMembers();
+        });
+        document.getElementById('btn-close-wallet').addEventListener('click', () => {
+            document.getElementById('wallet-modal').classList.remove('visible');
+        });
+        document.getElementById('wallet-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.remove('visible');
+        });
+
+        function editMember(id, first, last, phone, role) {
+            const m = allMembers.find(x => x.id === id);
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-first').value = first;
+            document.getElementById('edit-last').value = last;
+            document.getElementById('edit-phone').value = phone;
+            document.getElementById('edit-role').value = role;
+            const hasForfait = m && m.forfait_indiv_quota !== null;
+            document.getElementById('edit-has-forfait').checked = hasForfait;
+            document.getElementById('edit-quota-wrap').style.display = hasForfait ? 'flex' : 'none';
+            document.getElementById('edit-quota').value = hasForfait ? m.forfait_indiv_quota : '';
+            updateForfaitLabel();
+            document.getElementById('edit-modal').classList.add('visible');
+        }
+
+        function updateForfaitLabel() {
+            const checked = document.getElementById('edit-has-forfait').checked;
+            const lbl = document.getElementById('edit-forfait-label');
+            lbl.textContent = checked ? 'Forfait individuel souscrit' : 'Forfait individuel non souscrit';
+            lbl.style.color = checked ? '#c0392b' : '';
+        }
+
+        document.getElementById('edit-has-forfait').addEventListener('change', function() {
+            document.getElementById('edit-quota-wrap').style.display = this.checked ? 'flex' : 'none';
+            if (this.checked && !document.getElementById('edit-quota').value) {
+                document.getElementById('edit-quota').value = 10;
+            }
+            updateForfaitLabel();
+        });
+
+        async function reinvite(id) {
+            const res = await apiFetch(`/members/${id}/reinvite`, { method: 'POST' });
+            const data = await res?.json();
+            if (res && res.ok) {
+                showToast(data.message);
+            } else {
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        }
+
+        async function deleteMember(id, email) {
+            if (!confirm(`Supprimer définitivement ${email} ? Cette action est irréversible.`)) return;
+            const res = await apiFetch(`/members/${id}`, { method: 'DELETE' });
+            if (res && res.ok) {
+                showToast('Membre supprimé');
+                loadMembers();
+            } else {
+                const data = await res?.json();
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

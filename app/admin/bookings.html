@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservations — Admin ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-shield-alt"></i> Administration</h2>
+                <p id="admin-name"></p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="./"><i class="fas fa-chart-line"></i> Tableau de bord</a></li>
+                <li><a href="./slots.html"><i class="fas fa-calendar-plus"></i> Créneaux</a></li>
+                <li><a href="./bookings.html" class="active"><i class="fas fa-bookmark"></i> Réservations</a></li>
+                <li><a href="./members.html"><i class="fas fa-users"></i> Membres</a></li>
+                <li><a href="./payments.html"><i class="fas fa-euro-sign"></i> Paiements</a></li>
+                <li><a href="./actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></li>
+                            <li style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.5rem;"><a href="../member/bookings.html"><i class="fas fa-calendar-check"></i> Réserver un cours</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                <a href="#" id="logout-btn" style="margin-top: 0.5rem;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </aside>
+
+        <div class="dashboard-content">
+            <h1>Réservations</h1>
+
+            <div class="toolbar">
+                <select id="filter-status">
+                    <option value="">Tous les statuts</option>
+                    <option value="confirmed" selected>Confirmées</option>
+                    <option value="cancelled">Annulées</option>
+                </select>
+                <label><input type="checkbox" id="filter-upcoming" checked> À venir uniquement</label>
+            </div>
+
+            <table class="data-table" id="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Membre</th>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Lieu</th>
+                        <th>Paiement</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="bookings-empty" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <p>Aucune réservation</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth(['admin', 'prof']);
+        if (user) {
+            document.getElementById('admin-name').textContent = user.email;
+            loadBookings();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+        document.getElementById('filter-status').addEventListener('change', loadBookings);
+        document.getElementById('filter-upcoming').addEventListener('change', loadBookings);
+
+        async function loadBookings() {
+            const status = document.getElementById('filter-status').value;
+            const upcoming = document.getElementById('filter-upcoming').checked;
+            let url = '/bookings?';
+            if (status) url += `status=${status}&`;
+            if (upcoming) url += 'upcoming=true&';
+
+            const res = await apiFetch(url);
+            if (!res || !res.ok) return;
+            const bookings = await res.json();
+
+            const tbody = document.getElementById('bookings-tbody');
+            tbody.innerHTML = '';
+
+            if (bookings.length === 0) {
+                document.getElementById('bookings-table').style.display = 'none';
+                document.getElementById('bookings-empty').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('bookings-table').style.display = '';
+            document.getElementById('bookings-empty').style.display = 'none';
+
+            bookings.forEach(b => {
+                const name = [b.first_name, b.last_name].filter(Boolean).join(' ') || b.email;
+                const payBadge = b.payment_status === 'paid'
+                    ? '<span class="badge-status badge-paid">Payé</span>'
+                    : '<span class="badge-status badge-pending">En attente</span>';
+                const statusBadge = b.status === 'confirmed'
+                    ? '<span class="badge-status badge-paid">Confirmée</span>'
+                    : '<span class="badge-status badge-cancelled">Annulée</span>';
+                const method = b.payment_method === 'card' ? '<i class="fas fa-credit-card"></i>' : b.payment_method === 'balance' ? '<i class="fas fa-wallet"></i>' : b.payment_method === 'forfait' ? '<i class="fas fa-ticket"></i>' : '<i class="fas fa-coins"></i>';
+
+                let actions = '';
+                if (b.status === 'confirmed') {
+                    actions = `<button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; color: #e74c3c;" onclick="cancelBooking(${b.id})"><i class="fas fa-times"></i></button>`;
+                }
+
+                tbody.innerHTML += `<tr>
+                    <td data-label="Membre">${name}</td>
+                    <td data-label="Date">${formatDate(b.date)}</td>
+                    <td data-label="Heure">${b.start_time}</td>
+                    <td data-label="Lieu">${b.location}</td>
+                    <td data-label="Paiement">${method} ${payBadge}</td>
+                    <td data-label="Statut">${statusBadge}</td>
+                    <td>${actions}</td>
+                </tr>`;
+            });
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Annuler cette réservation ?')) return;
+            const res = await apiFetch(`/bookings/${id}`, { method: 'DELETE' });
+            if (res && res.ok) {
+                showToast('Réservation annulée');
+                loadBookings();
+            } else {
+                const data = await res?.json();
+                showToast(data?.error || 'Erreur', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

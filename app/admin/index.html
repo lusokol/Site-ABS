@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration — ABS91</title>
+    <link rel="icon" type="image/png" href="../../media/cropped-abs.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-shield-alt"></i> Administration</h2>
+                <p id="admin-name"></p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="./" class="active"><i class="fas fa-chart-line"></i> Tableau de bord</a></li>
+                <li><a href="./slots.html"><i class="fas fa-calendar-plus"></i> Créneaux</a></li>
+                <li><a href="./bookings.html"><i class="fas fa-bookmark"></i> Réservations</a></li>
+                <li><a href="./members.html"><i class="fas fa-users"></i> Membres</a></li>
+                <li><a href="./payments.html"><i class="fas fa-euro-sign"></i> Paiements</a></li>
+                <li><a href="./actualites.html"><i class="fas fa-newspaper"></i> Actualités</a></li>
+                            <li style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.5rem;"><a href="../member/bookings.html"><i class="fas fa-calendar-check"></i> Réserver un cours</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <a href="../../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                <a href="#" id="logout-btn" style="margin-top: 0.5rem;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </aside>
+
+        <div class="dashboard-content">
+            <h1>Tableau de bord</h1>
+
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-label">Membres actifs</div>
+                    <div class="stat-card-value" id="stat-members">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Réservations à venir</div>
+                    <div class="stat-card-value" id="stat-upcoming">—</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-card-label">Revenus carte</div>
+                    <div class="stat-card-value" id="stat-card-revenue">—</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-card-label">Espèces en attente</div>
+                    <div class="stat-card-value" id="stat-cash-pending">—</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-card-label">Espèces encaissées</div>
+                    <div class="stat-card-value" id="stat-cash-collected">—</div>
+                </div>
+            </div>
+
+            <h2>Espèces en attente par membre</h2>
+            <table class="data-table" id="cash-table">
+                <thead>
+                    <tr>
+                        <th>Membre</th>
+                        <th>Email</th>
+                        <th>Montant dû</th>
+                    </tr>
+                </thead>
+                <tbody id="cash-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="cash-empty" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <p>Aucun paiement en espèces en attente</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" aria-live="polite"></div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = requireAuth(['admin', 'prof']);
+        if (user) {
+            document.getElementById('admin-name').textContent = user.email;
+            loadDashboard();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+        async function loadDashboard() {
+            const res = await apiFetch('/admin/summary');
+            if (!res || !res.ok) return;
+            const data = await res.json();
+
+            document.getElementById('stat-members').textContent = data.members;
+            document.getElementById('stat-upcoming').textContent = data.bookings.upcoming;
+            document.getElementById('stat-card-revenue').textContent = formatCents(data.revenue.card_paid_cents);
+            document.getElementById('stat-cash-pending').textContent = formatCents(data.revenue.cash_pending_cents);
+            document.getElementById('stat-cash-collected').textContent = formatCents(data.revenue.cash_collected_cents);
+
+            const tbody = document.getElementById('cash-tbody');
+            tbody.innerHTML = '';
+            if (data.cash_per_member.length === 0) {
+                document.getElementById('cash-table').style.display = 'none';
+                document.getElementById('cash-empty').style.display = 'flex';
+            } else {
+                data.cash_per_member.forEach(m => {
+                    const name = [m.first_name, m.last_name].filter(Boolean).join(' ') || '—';
+                    tbody.innerHTML += `<tr>
+                        <td data-label="Membre">${name}</td>
+                        <td data-label="Email">${m.email}</td>
+                        <td data-label="Montant dû"><strong>${formatCents(m.pending_cents)}</strong></td>
+                    </tr>`;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
